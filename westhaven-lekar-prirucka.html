@@ -1,0 +1,1689 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WestHaven | Lékařská příručka</title>
+  <style>
+    :root {
+      --ink: #201914;
+      --paper: #f3e3bd;
+      --paper-2: #fff5dc;
+      --dark: #16110d;
+      --brown: #6e4b2c;
+      --gold: #d8ad62;
+      --red: #b43b36;
+      --green: #39795b;
+      --blue: #315f88;
+      --violet: #6b4e8e;
+      --muted: #8d7658;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      background:
+        radial-gradient(circle at top left, rgba(216, 173, 98, 0.14), transparent 34rem),
+        linear-gradient(135deg, #16110d 0%, #2a1f16 54%, #16110d 100%);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    .shell {
+      width: min(1420px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 56px;
+    }
+
+    header {
+      color: #f9e8c1;
+      padding: 22px 0 18px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(2rem, 4vw, 4.2rem);
+      line-height: 0.95;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 920px;
+      margin: 0;
+      color: #d9c18d;
+      font-size: 1.08rem;
+      line-height: 1.55;
+    }
+
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      margin: 18px 0 24px;
+      padding: 14px;
+      border: 1px solid rgba(216, 173, 98, 0.45);
+      background: rgba(29, 22, 16, 0.94);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .search-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    input[type="search"] {
+      width: 100%;
+      min-height: 46px;
+      border: 1px solid #9f7846;
+      border-radius: 6px;
+      background: #fff8e7;
+      color: var(--ink);
+      font: 1rem Georgia, "Times New Roman", serif;
+      padding: 0 14px;
+      outline: none;
+    }
+
+    input[type="search"]:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(216, 173, 98, 0.24);
+    }
+
+    .count {
+      color: #f3e3bd;
+      white-space: nowrap;
+      font-weight: 700;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(216, 173, 98, 0.2);
+    }
+
+    button {
+      border: 1px solid rgba(216, 173, 98, 0.5);
+      border-radius: 6px;
+      background: #332416;
+      color: #f7dfad;
+      min-height: 34px;
+      padding: 0 12px;
+      font: 700 0.9rem Georgia, "Times New Roman", serif;
+      cursor: pointer;
+    }
+
+    button:hover,
+    button.active {
+      background: var(--gold);
+      color: #21160d;
+      border-color: var(--gold);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    nav {
+      position: sticky;
+      top: 128px;
+      max-height: calc(100vh - 150px);
+      overflow: auto;
+      padding: 14px;
+      border: 1px solid rgba(216, 173, 98, 0.32);
+      background: rgba(20, 15, 10, 0.86);
+      box-shadow: var(--shadow);
+    }
+
+    nav h2 {
+      margin: 0 0 10px;
+      color: #f7dfad;
+      font-size: 1rem;
+    }
+
+    nav a {
+      display: block;
+      color: #d9c18d;
+      text-decoration: none;
+      padding: 8px 9px;
+      border-left: 3px solid transparent;
+      line-height: 1.25;
+    }
+
+    nav a:hover {
+      color: #fff5dc;
+      border-left-color: var(--gold);
+      background: rgba(255, 245, 220, 0.06);
+    }
+
+    main {
+      display: grid;
+      gap: 18px;
+    }
+
+    .card {
+      border: 1px solid #9a7044;
+      background:
+        linear-gradient(90deg, var(--accent), var(--accent)) left top / 7px 100% no-repeat,
+        linear-gradient(180deg, var(--paper-2), var(--paper));
+      box-shadow: var(--shadow);
+      padding: 20px 20px 18px 27px;
+    }
+
+    .card.hidden { display: none; }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: start;
+      border-bottom: 2px solid rgba(110, 75, 44, 0.28);
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+    }
+
+    .card h2 {
+      margin: 0;
+      color: #2c1b10;
+      font-size: clamp(1.35rem, 2.2vw, 2rem);
+      line-height: 1.08;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--accent) 18%, #fff3d2);
+      border: 1px solid color-mix(in srgb, var(--accent) 58%, #fff3d2);
+      color: #2b2118;
+      font-size: 0.84rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: normal;
+      overflow-wrap: anywhere;
+      font: 1rem/1.58 Georgia, "Times New Roman", serif;
+      color: #261d16;
+    }
+
+    details {
+      margin-top: 16px;
+      border-top: 1px solid rgba(110, 75, 44, 0.25);
+      padding-top: 12px;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: #5c3a20;
+    }
+
+    .sources {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .sources img {
+      width: 100%;
+      border: 1px solid #8c6842;
+      background: #1d140d;
+      display: block;
+    }
+
+    mark {
+      background: #ffe070;
+      color: #1b130c;
+      padding: 0 2px;
+    }
+
+    .kw {
+      display: inline;
+      border-radius: 4px;
+      padding: 0 3px;
+      font-weight: 700;
+    }
+
+    .kw-danger {
+      background: rgba(180, 59, 54, 0.18);
+      color: #8f211f;
+      border-bottom: 2px solid rgba(180, 59, 54, 0.48);
+    }
+
+    .kw-care {
+      background: rgba(57, 121, 91, 0.17);
+      color: #245f45;
+      border-bottom: 2px solid rgba(57, 121, 91, 0.45);
+    }
+
+    .kw-tool {
+      background: rgba(49, 95, 136, 0.16);
+      color: #244e75;
+      border-bottom: 2px solid rgba(49, 95, 136, 0.42);
+    }
+
+    .kw-med {
+      background: rgba(107, 78, 142, 0.16);
+      color: #56367a;
+      border-bottom: 2px solid rgba(107, 78, 142, 0.42);
+    }
+
+    .ordinace {
+      display: none;
+      margin: 0 0 24px;
+      border: 1px solid #9a7044;
+      background: linear-gradient(180deg, #fff5dc, #f3e3bd);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .ordinace.show { display: block; }
+
+    .ordinace-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: start;
+      border-bottom: 2px solid rgba(110, 75, 44, 0.26);
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+    }
+
+    .ordinace h2,
+    .ordinace h3 {
+      margin: 0;
+      color: #2c1b10;
+    }
+
+    .ordinace p {
+      margin: 6px 0 0;
+      color: #5c3a20;
+      line-height: 1.45;
+    }
+
+    .symptom-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 9px;
+      margin: 14px 0;
+    }
+
+    .symptom {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-height: 40px;
+      padding: 8px 10px;
+      border: 1px solid rgba(110, 75, 44, 0.34);
+      background: rgba(255, 248, 231, 0.72);
+      cursor: pointer;
+    }
+
+    .symptom input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--brown);
+      flex: 0 0 auto;
+    }
+
+    .ordinace-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .diagnosis-results {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+    }
+
+    .diagnosis-card {
+      border: 1px solid rgba(110, 75, 44, 0.42);
+      background: #fff8e7;
+      padding: 13px;
+    }
+
+    .diagnosis-card.best {
+      border-color: var(--green);
+      box-shadow: inset 0 0 0 2px rgba(57, 121, 91, 0.18);
+    }
+
+    .diagnosis-card h4 {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 0 0 8px;
+      color: #2c1b10;
+      font-size: 1.05rem;
+    }
+
+    .score {
+      color: #245f45;
+      white-space: nowrap;
+    }
+
+    .match-list {
+      margin: 8px 0 0;
+      padding-left: 19px;
+      line-height: 1.45;
+    }
+
+    .muted {
+      color: #765b3b;
+    }
+
+    .empty {
+      display: none;
+      padding: 26px;
+      background: #fff1cf;
+      border: 1px solid #b78649;
+      color: #3b2717;
+      box-shadow: var(--shadow);
+    }
+
+    .empty.show { display: block; }
+
+    @media (max-width: 920px) {
+      .layout { grid-template-columns: 1fr; }
+      nav { position: static; max-height: none; }
+      .toolbar { position: static; }
+    }
+
+    @media (max-width: 620px) {
+      .shell { width: min(100% - 18px, 1420px); padding-top: 14px; }
+      .search-row { grid-template-columns: 1fr; }
+      .ordinace-head { flex-direction: column; }
+      .card { padding: 16px 14px 16px 20px; }
+      .card-head { flex-direction: column; }
+      pre { font-size: 0.96rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <h1>WestHaven lékařská příručka</h1>
+      <p class="subtitle">Studijní web z tvých snímků. Text je přepsaný bez zkracování, rozdělený podle témat a doplněný vyhledáváním. U každé kapitoly můžeš rozbalit původní obrázek pro kontrolu.</p>
+    </header>
+
+    <section class="toolbar" aria-label="Vyhledávání a filtry">
+      <div class="search-row">
+        <input id="search" type="search" placeholder="Hledat: morfin, sepse, zlomenina, chřipka..." autocomplete="off" />
+        <div id="count" class="count">0 kapitol</div>
+      </div>
+      <div id="filters" class="filters"></div>
+      <div class="toolbar-actions">
+        <button type="button" id="ordinaceToggle">Ordinace</button>
+      </div>
+    </section>
+
+    <section id="ordinace" class="ordinace" aria-label="Ordinace - diagnostika podle příznaků">
+      <div class="ordinace-head">
+        <div>
+          <h2>Ordinace</h2>
+          <p>Zaklikni zjištěné příznaky z vyšetření. Výsledky se seřadí podle shody s nemocemi z tvých materiálů.</p>
+        </div>
+        <span class="tag">Diagnostická pomůcka</span>
+      </div>
+      <div id="symptoms" class="symptom-grid"></div>
+      <div class="ordinace-actions">
+        <button type="button" id="clearSymptoms">Vyčistit příznaky</button>
+      </div>
+      <div id="diagnosisResults" class="diagnosis-results"></div>
+    </section>
+
+    <div class="layout">
+      <nav>
+        <h2>Kapitoly</h2>
+        <div id="nav"></div>
+      </nav>
+
+      <main id="content"></main>
+    </div>
+    <div id="empty" class="empty">Nic nenalezeno. Zkus jiné slovo nebo vypni filtr.</div>
+  </div>
+
+  <script>
+    const chapters = [
+      {
+        id: "sluzebni-poznamky",
+        title: "Nemoce, příznaky, medikace a služební poznámky",
+        category: "Pravidla",
+        accent: "#b9832f",
+        images: [],
+        content: `Nemoce,příznaky, medikace
+
+-pacienta dóčkama vedete vy. Bohužel on nemůže říct, jestli má teplotu nebo ne. Takže poslechnout stetoskopem/fonendoskopem.
+
+-posloucháme plíce, tep, a samozřejmě i srdce (v té době ještě nemůžeme úplně odhadnout, že má pacient třeba aritmii atd)
+
+nějaká me a do pro info
+/me bere stetoskop a přikládá na hruď ,, Prosím hluboký nádech a výdech."
+
+/me teď přikládá na záda ,,A znovu nádech výdech."
+
+/Do Slyší šelest na plicích. (Když ji vidíme  v informaci co nám vyhodí fonendoskop)
+
+Postupy/popisy léčení zranění
+
+-pacient si může rpit zranění/nemoc sám. Narozdíl od nemocí u kterých používáme stetoskop/fonendoskop (viz. Nemoce a medikace)
+
+pacient vás musí tentokrát dóčkama vést. Vy podle nich jen zjišťujete co ho asi trápí a pak odhadnete vhodnou léčbu → zvolená léčba musí dobově odpovídat, klidně použijte chatgbt
+
+Obvazy, medikace, věci co prodáváme, ceník, limity
+
+Základní ošetření = 10$
+Obvaz→ 6$ (5ks na hlavu)
+
+Výjimka-Šerifové
+Obvaz→ 3$ (počet neomezený, podle stavu ve skladu)
+Základní ošetření → 5$
+
+!ZA OŠETŘENÍ KOLEGY LÉKAŘE/LÉKÁRNÍKA SI PENÍZE NEBEREME!
+
+-zkontrolujte si pohledem, nebo dóčkem zda mají odznak
+
+PACIENT MŮŽE UŽÍT SÁM
+Normální obvaz (zvedá health) → 6$
+Bylinkový vývar (zvedá staminu aka únavu)→ 5$
+Levandulová tinktura (výrazně snižuje stres)→ 2,5$
+Hořký sen (doplním)  - 3$
+
+Co může podat jen doktor
+Čichací sůl → probrání z bezvědomí/mdlob
+Syrupus ammoni chlorid → chřipka
+Rhinorrhdea → rýma
+Medicamen ad bronchitidem → bronchitida (zánět prudušek)
+Antidotum veneni serpentinorum → protijed na hadí kousnutí
+Elixir gastrdenteritis → gastroenteritida (zánět trávicí soustavy)
+Unguentum sulfuris ad scabiem → svrab (nemoc z špatné hygieny)
+Medicamen contra malaria → malárie (parazitní onemocnění od komárů, většinou se nakazíte v bažinách)
+
+Pomocná me, do
+
+/me bere syrup na chřipku a dáva na lžíčku
+
+/Me dává před pusu
+
+/me maže mast na místa s vyrážkou
+
+Pacient: /do jak to chutnalo?
+
+Doktor: /do hořko-sladce`
+      },
+      {
+        id: "desatero",
+        title: "Lékařské desatero",
+        category: "Pravidla",
+        accent: "#b43b36",
+        images: ["obrazky/Snímek obrazovky 2026-05-08 140520.png"],
+        content: `I. CTI ŽIVOT NAD VŠE OSTATNÍ
+Zdraví a život pacienta jsou nadřazené politice, penězům i osobním sporům. Lékař nechodí kolem horké kaše, lékař jedná.
+
+II. DISCIPLÍNA A ODDANOST
+Medicína není hobby, je to služba. Lékař musí být k dispozici, když ho město potřebuje, a vykonávat svou práci s chladnou hlavou.
+
+III. HROBOVÉ TICHO (Lékařské tajemství)
+To, co vidíte a slyšíte v ordinaci, zůstává v ordinaci. Vynášení informací o pacientech se trestá stejně přísně jako zanedbání péče.
+
+IV. NESTRANNOST
+Ošetřete žebráka stejně jako starostu. Kulka v těle zabíjí oba stejně. Vaším úkolem není soudit, ale léčit (a vystavit účet).
+
+V. ZÁKAZ VYNÁŠENÍ ZÁSOB (Klíčový bod)
+Veškerý zdravotnický materiál a léčiva jsou majetkem nemocnice.
+Je přísně zakázáno držet větší množství léků, morfia nebo lihu mimo prostory ambulance pro soukromé účely.
+Porušení tohoto bodu se považuje za krádež a trestá se okamžitým propuštěním, odebráním licence a nahlášením Šerifovi.
+
+VI. VZDĚLÁVÁNÍ A POKROK
+Medicína se mění. Lékař, který se přestane učit, se stává vrahem. Studujte nové postupy a respektujte vědu.
+
+VII. RESPEKT A HIERARCHIE
+Mezi lékaři vládne kolegialita, ale také řád. Slovo primáře a hlavního státního lékaře je konečné. Spory se řeší za zavřenými dveřmi, ne před pacientem.
+
+VIII. STABILITA A VÝKON
+Tíha našeho povolání je nesmírná. Způsob, jakým si lékař udržuje pevnou ruku a chladnou mysl tváří v tvář smrti, je jeho soukromou záležitostí. Komora nezkoumá vaše individuální metody na uklidnění nervů, pokud neohrožují bezpečnost pacienta. Rozhoduje výsledek, ne prostředky. Selhání se však neomlouvá.
+
+IX. OCHRANA A BEZPEČNOST
+Chraňte sebe i pacienta. Pokud je situace nebezpečná, volejte šerifa. Mrtvý doktor už nikomu nepomůže.
+
+X. REPREZENTACE STAVU
+Lékař je elitou společnosti. Dbejte na svůj vzhled, hygienu a vystupování. Nedělejte ostudu svému titulu.`
+      },
+      {
+        id: "telo-nastroje",
+        title: "Lidské tělo, nástroje a vybavení",
+        category: "Vybavení",
+        accent: "#315f88",
+        images: ["obrazky/Snímek obrazovky 2026-05-08 140536.png"],
+        content: `Lidské tělo (Homo sapiens)
+
+Hlava
+- Mozek - centrum nervové soustavy
+- Oči - zrak
+- Čelist - pohyb při žvýkání a řeči
+
+Horní končetina
+- Rameno - velký rozsah pohybu
+- Paže - síla a manipulace
+- Ruka
+
+Trup
+- Srdce - pumpuje krev
+- Plíce - dýchání
+- Játra - metabolismus, detoxikace
+
+Ruka
+- Oponovatelný palec
+- Jemná motorika
+
+Chodidlo
+- Stabilita a rovnováha
+
+Lebka detail
+Mozek - centrum nervové soustavy
+Skull detail
+Srdce - pumpuje krev
+
+Poznámky:
+- Bipedální lokomoce
+- Vysoce vyvinutý mozek
+- Oponovatelný palec
+- Živí se omnivorní stravou
+
+Poznámky:
+- Bipedální lokomoce
+- Vysoce vyvinutý mozek
+- Živí se omnivorní stravou
+
+Lékařská příručka
+Lékařské nástroje a vybavení
+Obecné nástroje pro vyšetření a diagnostiku
+
+Stetoskop
+pro poslech srdce a plic
+
+Teploměr (rtuťový)
+k měření tělesné teploty
+
+Reflexní kladívko
+pro testování reflexů
+
+Zrcátko (např. zubní nebo gynekologické)
+pro prohlídku tělesných dutin
+
+Zubní sonda
+pro vyšetření zubů
+
+Poklepový nástroj
+pro testování citlivosti zubů a tkání
+
+Skalpel
+pro řezání tkáně během operací
+
+Pinzeta
+k uchopení tkání, cizích těles nebo k jejich vytažení
+
+Sonda (chirurgická nebo gynekologická)
+pro prozkoumání dutin a ran
+
+Nůžky
+pro stříhání obvazů, tkání nebo chirurgických materiálů
+
+Dřevěná špachtle
+pro vyšetření úst a hrdla`
+      },
+      {
+        id: "dezinfekce-prohlidka",
+        title: "Dezinfekční prostředky a klasická prohlídka",
+        category: "Vyšetření",
+        accent: "#39795b",
+        images: ["obrazky/Snímek obrazovky 2026-05-08 140545.png"],
+        content: `Dezinfekční prostředky
+
+Karbolová kyselina (fenol)
+patří mezi nejčastěji používané dezinfekční prostředky v chirurgii. Používá se k dezinfekci ran, lékařských nástrojů i operačních místností.
+
+Lihový roztok (alkohol)
+používá se k čištění kůže před lékařským zákrokem a k dezinfekci drobných nástrojů.
+
+Jódový roztok
+slouží jako silné antiseptikum a používá se k dezinfekci ran a kůže před chirurgickými zákroky.
+
+Chlorové vápno
+používá se k dezinfekci prostor, nástrojů a kontaminovaných materiálů.
+
+Kyselina boritá
+působí jako mírné antiseptikum a používá se především na oči, kůži a drobné rány.
+
+Peroxid vodíku
+používá se k čištění ran, protože uvolňuje kyslík a pomáhá odstraňovat nečistoty.
+
+Kyselina salicylová
+používá se jako antiseptikum na kůži a při některých kožních onemocněních.
+
+Roztok manganistanu draselného
+slouží jako dezinfekční roztok a používá se k omývání ran nebo při infekcích.
+
+Formalin (roztok formaldehydu)
+používá se k dezinfekci nástrojů, místností a také k uchovávání biologických vzorků.
+
+Klasická lékařská prohlídka
+Postup prohlídky
+
+Anamnéza
+lékař se pacienta vyptává na potíže, délku trvání nemocí, předchozí choroby a celkový zdravotní stav.
+
+Kontrola teploty a pulsu
+lékař měří tělesnou teplotu rtuťovým teploměrem a kontroluje tep na zápěstí.
+
+Poslech hrudníku a zad
+lékař poslouchá srdce a plíce pomocí stetoskopu, aby zjistil například bronchitidu nebo zápal plic.
+
+Vyšetření břicha
+lékař prohmatává břicho a zjišťuje případné zduření, citlivost nebo tvrdost orgánů.
+
+Kontrola krku a lymfatických uzlin
+lékař kontroluje krk a prohmatává lymfatické uzliny, jejichž zvětšení může signalizovat infekci.
+
+Kontrola reflexů
+lékař poklepává reflexním kladívkem na koleno nebo jiné části těla a sleduje reakci svalů.
+
+Závěr a doporučení léčby
+lékař stanovuje diagnózu a doporučuje léčbu, například podání léků, klid na lůžku nebo další vyšetření.`
+      },
+      {
+        id: "anestezie",
+        title: "Lokální a celková anestezie",
+        category: "Léčiva",
+        accent: "#6b4e8e",
+        images: ["obrazky/Snímek obrazovky 2026-05-08 140552.png"],
+        content: `Lokální anestezie
+
+Kokain (od roku 1884)
+používá se zejména v zubním lékařství a při menších chirurgických zákrocích. Látka tlumí bolest v místě aplikace, avšak při častém užívání může způsobovat závislost a nežádoucí účinky, jako je neklid, halucinace nebo srdeční potíže.
+
+Etylchlorid (od roku 1892)
+používá se ve formě spreje na kůži. Rychlým ochlazením tkáně vyvolává krátkodobou ztrátu citlivosti a slouží především při drobných operacích nebo ošetření ran.
+
+Infiltrační anestezie (od roku 1890)
+anestetická látka, nejčastěji kokain, se vstřikuje do tkáně nebo k nervu. Tím dochází k místnímu znecitlivění určité oblasti těla.
+
+Celková anestezie
+
+Éter (od roku 1846)
+patří mezi nejčastěji používaná celková anestetika. Podává se pomocí dýchací masky a uvádí pacienta do stavu bezvědomí vhodného pro chirurgický zákrok.
+
+Chloroform (od roku 1847)
+působí podobně jako éter, avšak méně dráždí dýchací cesty. Užívá se při větších operacích a někdy i při porodu. Ve vyšších dávkách však může způsobit zástavu srdce.
+
+Oxid dusný - rajský plyn (od roku 1860)
+používá se především v zubním lékařství. Má slabší účinek než éter či chloroform a často se podává společně s nimi.
+
+Kombinovaná anestezie (od roku 1890)
+při některých operacích se používá směs více anestetik, například éteru, chloroformu nebo rajského plynu, čímž se zvyšuje účinnost a snižují nežádoucí účinky.`
+      },
+      {
+        id: "strelna-poraneni",
+        title: "Střelná poranění",
+        category: "Poranění",
+        accent: "#b43b36",
+        images: ["obrazky/Snímek obrazovky 2026-05-08 140602.png", "obrazky/Snímek obrazovky 2026-05-08 140609.png"],
+        content: `Kompletní kostra člověka zepředu & svalová soustava
+
+STŘELNÁ PORANĚNÍ
+
+Nástroje
+Jódová tinktura, pinzeta, chirurgická sonda k vyhledání střely, skalpel nebo chirurgické nůžky, emitní miska, sterilní gáza a obvazy, obinadla, turniket (škrtidlo - pouze v nutných případech) a morfin k utišení bolesti.
+
+A) Průstřel (rána skrz naskrz)
+
+I. Zastavení krvácení
+Krvácení se zastavuje přímým tlakem sterilní gázy nebo tlakovým obvazem. Škrtidlo se používá pouze v krajním případě.
+
+II. Vyčištění rány
+Rána se omývá sterilní vodou nebo antiseptickým roztokem. Okolí rány se potírá jódovou tinkturou.
+
+III. Vyšetření rány
+Chirurgickou sondou se zjišťuje, zda se v ráně nenachází úlomky kosti, oděvu nebo střelného prachu.
+
+IV. Ošetření rány
+Je-li rána čistá, může být částečně sešita a ponechá se drenážní otvor. Při znečištění se rána ponechává otevřená a překryje se sterilním obvazem.
+
+V. Obvaz a sledování pacienta
+Rána se překrývá sterilním obvazem. Pacient je sledován pro možnost infekce, horečky nebo gangrény.
+
+B) Střelná rána s kulkou v těle
+
+I. Zastavení krvácení
+Krvácení se zastavuje tlakem nebo obvazem.
+
+II. Vyhledání střely
+Pomocí sondy nebo pinzety se zjišťuje poloha střely. Je-li blízko povrchu, lze ji odstranit pinzetou nebo drobným chirurgickým řezem.
+
+III. Vyčištění rány
+Po vyjmutí střely se rána vypláchne antiseptikem a odstraní se nečistoty.
+
+IV. Ošetření rány
+Při vysokém riziku infekce se rána ponechává otevřená. Je-li rána čistá, může být částečně sešita.
+
+V. Léčba a pozorování
+Pacientovi se podává morfin nebo laudanum proti bolesti. Sleduje se výskyt horečky, infekce nebo gangrény.
+
+Možné komplikace
+
+I. Infekce a sepse
+představují největší nebezpečí, proto je nutné důkladné čištění rány.
+
+II. Gangréna
+při těžké infekci může být nutná amputace končetiny.
+
+III. Šok a ztráta krve
+pacient musí být udržován v klidu a je mu podávána tekutina a léky proti bolesti.
+
+Další druhy střelných poranění
+
+I. Povrchová střelná rána
+střela pouze poraní kůži a podkožní tkáň, aniž by pronikla hluboko do těla.
+
+II. Zástřel (slepá střelná rána)
+střela pronikne do těla, ale nezanechá výstupní otvor.
+
+III. Tříštivé střelné poranění
+střela rozdrtí kost nebo tkáně a způsobí rozsáhlé poškození.
+
+IV. Střelná rána s poraněním kosti
+střela zasáhne kost a způsobí zlomeninu nebo její roztříštění.
+
+V. Střelné poranění životně důležitých orgánů
+zásah plic, srdce, jater nebo mozku, který často vede k těžkým následkům nebo smrti.`
+      },
+      {
+        id: "rezna-bodna",
+        title: "Řezná rána a bodná rána",
+        category: "Poranění",
+        accent: "#b43b36",
+        images: ["obrazky/Snímek obrazovky 2026-05-08 140616.png"],
+        content: `ŘEZNÁ RÁNA
+
+Řezná rána vzniká působením ostrého předmětu (např. nůž nebo sklo), má pravidelné okraje, bývá hlubší a často silně krvácí.
+
+Postup ošetření
+
+I. Zastavení krvácení
+Na ránu se přikládá přímý tlak pomocí čisté látky nebo sterilního obvazu. Při silném krvácení z končetiny lze použít škrtidlo přiložené nad ránou.
+
+II. Vyčištění rány
+Rána se omývá čistou vodou nebo antiseptickým roztokem, například alkoholem nebo jódovou tinkturou. Pokud jsou v ráně cizí tělesa, odstraňují se pinzetou.
+
+III. Přiložení obvazu
+Na ránu se přikládá sterilní gáza nebo čistý obvaz. Rána se následně pevně obváže, aby se zabránilo dalšímu krvácení a znečištění.
+
+IV. Sešití hlubší rány
+Je-li rána hluboká, může být sešita chirurgickou nití, například katgutem nebo hedvábím. Tento zákrok obvykle provádí lékař.
+
+V. Prevence infekce
+Rána se pravidelně čistí a převazuje antiseptickými prostředky, protože antibiotika nejsou k dispozici.
+
+VI. Další péče
+Pacient musí ránu udržovat v čistotě a klidu. Dostatečný přísun tekutin a odpočinek podporují hojení.
+
+BODNÁ RÁNA
+
+Bodná rána vzniká proniknutím ostrého a špičatého předmětu do těla, například nožem, dýkou nebo bodákem. Tyto rány mohou být na povrchu malé, avšak často zasahují hluboké tkáně nebo vnitřní orgány.
+
+Postup ošetření
+
+I. Zastavení krvácení
+Na ránu se přikládá sterilní obvaz a vyvíjí se mírný tlak. Při silném krvácení z končetiny lze použít škrtidlo.
+
+II. Vyšetření rány
+Lékař zjišťuje hloubku poranění pomocí chirurgické sondy. Je nutné zjistit, zda nebyly poškozeny důležité orgány nebo cévy.
+
+III. Vyčištění rány
+Rána se opatrně omývá sterilní vodou nebo antiseptickým roztokem. Okolí rány se potírá jódovou tinkturou.
+
+IV. Ošetření rány
+Většina bodných ran se nesešívá, aby mohl odtékat hnis nebo krev. Rána se pouze překryje sterilním obvazem.
+
+V. Sledování pacienta
+Pacient je sledován pro známky vnitřního krvácení, horečky nebo infekce.`
+      },
+      {
+        id: "trzna-siti",
+        title: "Tržná rána a šití ran",
+        category: "Poranění",
+        accent: "#b43b36",
+        images: ["obrazky/Snímek obrazovky 2026-05-08 140624.png"],
+        content: `TRŽNÁ RÁNA
+
+Tržná rána vzniká působením silného tahu nebo roztržení tkáně, například při nehodách, pádech nebo poranění stroji. Okraje rány jsou nepravidelné a tkáň bývá často silně poškozena.
+
+Postup ošetření
+
+I. Zastavení krvácení
+Na ránu se přikládá tlakový obvaz. Při silném krvácení může být použito škrtidlo.
+
+II. Vyčištění rány
+Rána se důkladně omývá vodou a antiseptickým roztokem. Z rány se odstraňují nečistoty, úlomky nebo zbytky tkání.
+
+III. Odstranění poškozené tkáně
+Silně poškozené nebo odumřelé části tkáně se mohou odstranit chirurgickým nástrojem, aby se zabránilo infekci.
+
+IV. Ošetření rány
+Rána se často ponechává otevřená a překrývá se sterilním obvazem. Sešití se provádí pouze v případě, že je rána čistá.
+
+V. Další péče
+Rána se pravidelně čistí a převazuje. Pacient je sledován kvůli možnému vzniku infekce nebo gangrény.
+
+ŠITÍ RAN
+
+Šití ran slouží ke spojení okrajů poraněné tkáně a urychlení hojení. Provádí se především u hlubších nebo větších ran, které se samy neuzavírají.
+
+Nástroje
+Jódová tinktura, chirurgická jehla, šicí nit (hedvábí nebo katgut), pinzeta, nůžky nebo skalpel, sterilní obvazy, emitní miska a lokální anestetikum.
+
+Postup
+
+I. Příprava rány
+Rána se nejprve důkladně očistí a vydezinfikuje alkoholem nebo jódovým roztokem.
+
+II. Podání anestetika
+Do okolí rány se aplikuje lokální anestetikum, aby se snížila bolest během zákroku.
+
+III. Příprava nástrojů
+Používají se sterilní chirurgické jehly a šicí nitě. Nejčastěji se používá hedvábí nebo katgut, který se v těle postupně vstřebává.
+
+IV. Šití rány
+Jehla se vede skrz okraje rány tak, aby došlo k jejich spojení. Nejčastěji se používá přerušovaný steh, při kterém se jednotlivé uzly vážou podél celé rány.
+
+V. Péče po šití
+Rána se překrývá sterilním obvazem. Pacient musí ránu udržovat v čistotě a pravidelně měnit obvaz. Nevstřebatelné stehy se odstraňují po několika dnech nebo týdnech podle průběhu hojení.`
+      },
+      {
+        id: "ustknuti-hadem",
+        title: "Uštknutí hadem",
+        category: "Poranění",
+        accent: "#b43b36",
+        images: ["obrazky/Snímek obrazovky 2026-05-08 140630.png", "obrazky/Snímek obrazovky 2026-05-08 140639.png"],
+        content: `UŠTKNUTÍ HADEM
+
+U hadího uštknutí je nejprve nutné zjistit, zda se jedná o hada jedovatého nebo nejedovatého.
+
+A) Uštknutí jedovatým hadem
+
+I. Odstranění jedu
+Rána se může lehce naříznout a pokusíme se vysát jed.
+
+II. Přiložení škrtidla
+Škrtidlo se přikládá nad ránu (mezi ránou a srdcem). Každých 15 minut se krátce povolí.
+
+III. Ošetření rány
+Rána se dezinfikuje a může se vypálit rozžhaveným kovem.
+
+IV. Přikládání pijavic
+Pijavice mohou pomoci odstranit krev z okolí rány.
+
+V. Podání protijedu
+Je-li dostupný, podává se protijed a pacient je sledován.
+
+B) Uštknutí nejedovatým hadem
+
+I. Vyčištění rány
+Rána se omývá vodou, alkoholem nebo octem.
+
+II. Zastavení krvácení
+Přikládá se tlakový obvaz.
+
+III. Dezinfekce
+Okolí rány se potírá jódovou tinkturou nebo alkoholem.
+
+Chyby při ošetření
+
+I. Ignorování rány - může vést k infekci.
+II. Příliš pevné škrtidlo - hrozí odumření tkáně.
+III. Nadměrný alkohol - oslabuje organismus.
+IV. Hluboké naříznutí rány - může způsobit silné krvácení.
+
+Poznámka ke zdroji:
+Tato stránka je ve složce vyfocená dvakrát jako samostatné snímky se stejným obsahem. Oba původní snímky jsou uložené níže v rozbalení.`
+      },
+      {
+        id: "cpavek-tupa-luxace",
+        title: "Čpavek, tupá poranění a vyhození kloubu",
+        category: "Poranění",
+        accent: "#b9832f",
+        images: ["obrazky/Snímek obrazovky 2026-05-08 140648.png"],
+        content: `ČPAVEK
+
+Čpavek je silně dráždivá látka, která působí na sliznice a dýchací cesty. V malých dávkách stimuluje nervový systém a vyvolává reflexní nádech.
+
+Použití
+
+I. Při mdlobách
+Čpavkový roztok nebo čpavková sůl se přikládá k nosu pacienta, aby jeho výpary vyvolaly nádech a probuzení.
+
+II. Jako antiseptikum
+Používá se k povrchové dezinfekci ran, i když méně často než jiné dezinfekční prostředky.
+
+III. Při bolestech svalů
+Ve směsích, například v čpavkovém lihu, se používá k potírání kůže při bolestech svalů nebo otocích.
+
+TUPÁ PORANĚNÍ
+
+Tupé poranění vzniká nárazem, pádem nebo silným tlakem. Projevuje se bolestí, otokem, modřinou nebo poruchou pohybu postižené části těla.
+
+Postup ošetření
+
+I. Zklidnění poraněné části
+Poraněné místo se ponechává v klidu a pokud možno se znehybní.
+
+II. Přiložení obvazu nebo chladu
+Na místo se přikládá obvaz nebo studený obklad ke zmírnění otoku.
+
+III. Sledování poranění
+Pokud se objeví silná bolest, otok nebo deformace, je nutné vyšetření lékařem.
+
+Vyhození kloubu
+je stav, kdy se kloubní hlavice vychýlí ze své jamky.
+
+Luxace ramene:
+hlavice pažní kosti vyskočí z jamky lopatky.
+
+Luxace kolene:
+kloubní plochy stehenní a holenní kosti se posunou mimo správné postavení.
+
+Ošetření
+Postižený kloub se nejprve znehybní a poté se snažíme kloub ručně napravit (repozice). Poté se končetina fixuje obvazem nebo dlahou, aby zůstala v klidu. Přikládají se studené obklady a nemocný několik týdnů odpočívá.`
+      },
+      {
+        id: "zlomeniny-sepse",
+        title: "Zlomeniny a sepse",
+        category: "Poranění",
+        accent: "#b9832f",
+        images: ["obrazky/Snímek obrazovky 2026-05-08 140655.png"],
+        content: `ZLOMENINY
+
+Zlomenina je poranění, při kterém dojde k přerušení nebo poškození kosti. Projevuje se bolestí, otokem, deformací končetiny a omezením pohybu.
+
+Druhy zlomenin
+
+I. Otevřená zlomenina
+Zlomená kost proniká skrz kůži. Rána se překrývá sterilním obvazem a končetina se znehybňuje.
+
+II. Uzavřená zlomenina
+Kost je zlomená, ale kůže zůstává neporušená. Končetina se fixuje dlahou.
+
+III. Tříštivá zlomenina
+Kost je rozlomena na více částí. Léčba je obtížná a často vyžaduje chirurgický zákrok.
+
+IV. Únavová zlomenina
+Vzniká postupně při dlouhodobém přetěžování kosti.
+
+V. Zlomenina s posunem
+Části kosti jsou posunuty ze své původní polohy.
+
+Ošetření zlomenin
+
+I. Znehybnění končetiny
+Používají se dřevěné nebo kovové dlahy, případně pevné obvazy.
+
+II. Srovnání kostí
+Pokud jsou kosti posunuty, lékař je srovná ručně, často v anestézii (éter nebo chloroform).
+
+III. Tlumení bolesti
+Podávají se opiáty, například morfin.
+
+IV. Další péče
+Končetina zůstává znehybněna po dobu několika týdnů a pravidelně se kontroluje hojení.
+
+V. Komplikace
+Hrozí infekce, špatný srůst kosti nebo v těžkých případech gangréna.
+
+Sepse
+
+Sepse (otrava krve) je závažný stav, který vzniká, když se infekce z rány nebo jiného místa v těle rozšíří do krevního oběhu. Organismus na infekci reaguje silnou obrannou reakcí, která může poškodit tkáně a orgány. Mezi příznaky patří vysoká horečka, zrychlený tep, zrychlené dýchání a celková slabost. Sepse vyžaduje rychlou lékařskou pomoc.`
+      },
+      {
+        id: "popaleniny-inhalace",
+        title: "Popáleniny, parní inhalace a inhalace plynů",
+        category: "Stavy",
+        accent: "#b43b36",
+        images: ["obrazky/Snímek obrazovky 2026-05-08 140705.png"],
+        content: `Popáleniny
+
+Popáleniny vznikají působením vysoké teploty, horké tekutiny, ohně, elektřiny nebo chemických látek.
+
+I. Stupně popálenin
+1. stupeň - zarudnutí kůže, bez puchýřů.
+2. stupeň - vznik puchýřů, silná bolest.
+3. stupeň - hluboké poškození kůže, kůže může být bílá nebo spálená.
+
+II. Ochlazení rány
+Popálené místo se co nejdříve ochladí studenou vodou po dobu 10-20 minut.
+
+III. Ošetření rány
+Rána se sterilně překryje. Puchýře se nepropichují.
+
+IV. Další péče
+U větších nebo hlubších popálenin je nutné vyhledat lékařskou pomoc.
+
+V. Komplikace
+Může dojít k infekci, zjizvení nebo poškození hlubších tkání.
+
+Parní inhalace
+
+I. Použití
+Používá se při nachlazení, kašli nebo ucpaných dýchacích cestách.
+
+II. Princip
+Postižený vdechuje teplou páru, která zvlhčuje dýchací cesty a uvolňuje hlen.
+
+III. Postup
+Horká voda se nalije do nádoby, postižený se nad ni nakloní a vdechuje páru (často s ručníkem přes hlavu).
+
+IV. Účinek
+Pomáhá uvolnit dýchání a zmírnit kašel.
+
+Inhalace škodlivých plynů
+
+I. Příčina
+Vzniká vdechnutím škodlivých plynů, kouře nebo chemických výparů.
+
+II. Příznaky
+Dušnost, kašel, bolest na hrudi, závratě nebo ztráta vědomí.
+
+III. Ošetření
+Postiženého je nutné rychle přenést na čerstvý vzduch a uvolnit těsný oděv.
+
+IV. Další péče
+Zajistit klid a v případě potíží přivolat lékařskou pomoc.`
+      },
+      {
+        id: "horko-zabaly",
+        title: "Horké kolapsy, úpal, úžeh a studené zábaly",
+        category: "Stavy",
+        accent: "#b9832f",
+        images: ["obrazky/Snímek obrazovky 2026-05-08 140711.png"],
+        content: `Horké kolapsy
+
+I. Příčina
+Vznikají při přehřátí organismu v horkém prostředí.
+
+II. Příznaky
+Slabost, závratě, pocení a pocit na omdlení.
+
+III. Ošetření
+Postiženého uložit do chladného prostředí, dát mu napít vody a zajistit klid.
+
+Úpal
+
+I. Příčina
+Vzniká při dlouhém pobytu v horkém prostředí bez dostatečného ochlazení.
+
+II. Příznaky
+Bolest hlavy, nevolnost, zvracení, únava a zvýšená tělesná teplota.
+
+III. Ošetření
+Postiženého přemístit do chladného místa, ochladit tělo a podat tekutiny.
+
+Úžeh
+
+I. Příčina
+Vzniká při dlouhém pobytu na přímém slunci, hlavně bez pokrývky hlavy.
+
+II. Příznaky
+Bolest hlavy, závratě, nevolnost, zarudlá a horká kůže.
+
+III. Ošetření
+Postiženého přesunout do stínu, ochladit hlavu a tělo a dát napít.
+
+Studené zábaly
+
+I. Použití
+Používají se při horečce nebo přehřátí těla.
+
+II. Postup
+Tělo se zabalí do vlhkého studeného prostěradla nebo obkladu.
+
+III. Účinek
+Pomáhá snižovat tělesnou teplotu.`
+      },
+      {
+        id: "omrzliny-infekcni",
+        title: "Omrzliny, infekční onemocnění a tuberkulóza",
+        category: "Nemoci",
+        accent: "#39795b",
+        images: ["obrazky/Snímek obrazovky 2026-05-08 140716.png"],
+        content: `Omrzliny
+
+I. Příčina
+Vznikají při dlouhodobém působení chladu.
+
+II. Příznaky
+Kůže je bledá, studená, necitlivá a může bolet.
+
+III. Ošetření
+Postižené místo pomalu zahřívat, například vlažnou vodou.
+
+IV. Další péče
+Místo sterilně překrýt a při vážnějších omrzlinách vyhledat lékaře.
+
+Infekční onemocnění
+
+Infekční onemocnění patří mezi nejnebezpečnější choroby a často způsobují rozsáhlé epidemie. Nemoci jako tuberkulóza, cholera nebo tyfus se šíří především špatnou hygienou, znečištěnou vodou nebo přenosem mezi lidmi. Tyto choroby představují vážné nebezpečí pro obyvatelstvo a vyžadují pečlivé lékařské sledování. Velký význam má čistota prostředí, správná hygiena a včasné lékařské ošetření, které může zabránit dalšímu šíření nemocí.
+
+Tuberkulóza
+
+I. Příčina
+Infekční onemocnění způsobené bakteriemi, které napadá hlavně plíce.
+
+II. Příznaky
+Dlouhodobý kašel, horečka, únava, hubnutí a někdy vykašlávání krve.
+
+III. Přenos
+Šíří se kapénkami při kašli nebo kýchání.
+
+IV. Léčba
+Léčí se dlouhodobým podáváním antibiotik.`
+      },
+      {
+        id: "nestovice-cholera-spala-tyfus",
+        title: "Neštovice, cholera, spála a tyfus",
+        category: "Nemoci",
+        accent: "#39795b",
+        images: ["obrazky/Snímek obrazovky 2026-05-08 140723.png"],
+        content: `Neštovice
+
+I. Příčina
+Vysoce nakažlivé virové onemocnění.
+
+II. Příznaky
+Horečka, únava a vyrážka s puchýři po celém těle.
+
+III. Přenos
+Šíří se kontaktem s nemocným nebo kapénkami.
+
+IV. Léčba
+Dříve pouze tlumení příznaků; dnes je nemoc díky očkování vymýcena.
+
+Cholera
+
+I. Příčina
+Bakteriální onemocnění způsobené bakteriemi ve znečištěné vodě nebo potravě.
+
+II. Příznaky
+Silný průjem, zvracení a rychlá ztráta tekutin.
+
+III. Přenos
+Především kontaminovanou vodou a potravinami.
+
+IV. Léčba
+Doplňování tekutin a léčba antibiotiky.
+
+Spála
+
+I. Příčina
+Infekční onemocnění způsobené streptokokovými bakteriemi.
+
+II. Příznaky
+Horečka, bolest v krku, vyrážka a typický „malinový“ jazyk.
+
+III. Přenos
+Kapénkami při kašli nebo kýchání.
+
+IV. Léčba
+Léčí se antibiotiky.
+
+Tyfus
+
+I. Příčina
+Bakteriální infekční onemocnění způsobené bakteriemi rodu Salmonella.
+
+II. Příznaky
+Vysoká horečka, bolest hlavy, únava a zažívací potíže.
+
+III. Přenos
+Kontaminovanou vodou nebo potravinami.
+
+IV. Léčba
+Antibiotika a dostatek tekutin.`
+      },
+      {
+        id: "zapaly-gangrena-pitva",
+        title: "Zápal plic, gangréna a pitva",
+        category: "Nemoci",
+        accent: "#39795b",
+        images: ["obrazky/Snímek obrazovky 2026-05-08 140729.png"],
+        content: `Zápal plic
+
+I. Příčina
+Zánět plic způsobený bakteriemi nebo viry.
+
+II. Příznaky
+Kašel, horečka, bolest na hrudi a obtížné dýchání.
+
+III. Přenos
+Kapénkami při kašli nebo kýchání.
+
+IV. Léčba
+Antibiotika (u bakteriální infekce), klid a dostatek tekutin.
+
+Gangréna
+
+I. Příčina
+Odumření tkáně způsobené nedostatečným prokrvením nebo infekcí.
+
+II. Příznaky
+Zčernání nebo ztmavnutí tkáně, bolest a zápach.
+
+III. Rizika
+Může vést k šíření infekce v těle.
+
+IV. Léčba
+Vyžaduje rychlou lékařskou pomoc, někdy chirurgický zákrok.
+
+Pitva
+
+Pitva je lékařské vyšetření těla zemřelého, jehož účelem je zjistit příčinu smrti a objasnit okolnosti úmrtí. Provádí ji lékař, obvykle na žádost úřadů nebo sheriffů. Pitva probíhá na pitevně určené k tomuto účelu a lékař při ní používá chirurgické nástroje, jako jsou skalpel, pilka a kleště.
+
+Nejprve provádíme důkladnou vnější prohlídku těla. Zaznamenává posmrtné změny, například ztuhlost těla (rigor mortis), barvu kůže a ochlazení těla, podle kterých odhaduje přibližný čas smrti. Pečlivě si všímáme také všech poranění, modřin, řezných ran nebo stop po střelných zraněních. Kontrolujeme oděv zesnulého, osobní předměty a další okolnosti, které mohou napovědět o průběhu události.
+
+Poté přistupujeme k otevření těla a vyšetření vnitřních orgánů. Postupně zkoumáme orgány hrudníku a břicha, především srdce, plíce, játra a žaludek. Sledujeme jejich velikost, barvu, případná poškození nebo známky nemoci. V případě podezření na otravu, lze odebrat obsah žaludku nebo jiné tělesné tekutiny k dalšímu zkoumání.
+
+Během celé pitvy pečlivě zapisujeme všechny nálezy do protokolu. Na základě pozorování a zkušeností poté stanovujeme pravděpodobnou příčinu smrti, například vykrvácení, nemoc, udušení nebo otravu. Tento lékařský posudek slouží jako důležitý dokument pro úřady a může pomoci při vyšetřování násilných činů nebo nejasných úmrtí.
+
+Pitva tak představuje důležitý nástroj medicíny i spravedlnosti.`
+      },
+      {
+        id: "diagnozy-zaklad",
+        title: "Diagnostické hodnoty: chřipka, rýma, gastroenteritida",
+        category: "Diagnostika",
+        accent: "#315f88",
+        images: ["obrazky/Snímek obrazovky 2026-05-08 141244.png", "obrazky/Snímek obrazovky 2026-05-08 141250.png"],
+        content: `Chřipka
+
+Tělesná teplota - 38.5°C až 40°C
+Stav jazyka - bílý povlak
+Stav mandlí - začervenalé
+Stav lymfatických uzlin - zvětšené
+Stav krku - bolestivý
+Stav plic - šelest
+Stav hlenu - hustý
+Stav očí - normální
+Stav nosu - normální
+Stav kůže - normální
+Přítomnost vyrážky - negativní
+Přítomnost nekrózy - negativní
+Pocení - negativní
+Stav žaludku - negativní
+
+Rýma
+
+Tělesná teplota - 37.0°C až 37.5°C
+Stav jazyka - normální
+Stav mandlí - normální
+Stav lymfatických uzlin - normální
+Stav krku - bolestivý
+Stav plic - normální
+Stav hlenu - hustý
+Stav očí - normální
+Stav nosu - normální
+Stav kůže - normální
+Přítomnost vyrážky - negativní
+Přítomnost nekrózy - negativní
+Pocení - negativní
+Stav žaludku - negativní
+
+Gastroenteritida
+
+Tělesná teplota - 37.0°C až 38.0°C
+Stav jazyka - normální
+Stav mandlí - normální
+Stav lymfatických uzlin - normální
+Stav krku - bolestivý
+Stav plic - normální
+Stav hlenu - normální
+Stav očí - normální
+Stav nosu - normální
+Stav kůže - bledá
+Přítomnost vyrážky - negativní
+Přítomnost nekrózy - negativní
+Pocení - negativní
+Stav žaludku - bolestivý`
+      },
+      {
+        id: "diagnozy-svrab-otrava-malarie",
+        title: "Diagnostika: svrab, otrava krve a malárie",
+        category: "Diagnostika",
+        accent: "#315f88",
+        images: ["obrazky/Snímek obrazovky 2026-05-08 141250.png", "obrazky/Snímek obrazovky 2026-05-08 141254.png"],
+        content: `Svrab
+
+Rychlý tep - kontrola stetoskopem
+Pupínky na kůži - kontrola vizuálně pro vyrážku
+Přítomnost vyrážky - kontrola vizuálně
+Intenzivní pocení - kontrola vizuálně
+Pacient se neustále drbe a škrábe
+
+Otrava krve
+
+Bílý povlak na jazyku - kontrolováno pomocí špachtle
+Zvětšené uzliny - kontrola palpací
+Bolestivý krk - kontrolováno vizuálně
+Šelest na plicích - kontrolováno stetoskopem
+Rychlý tep - kontrola
+Bledá kůže s vyrážkou - kontrola vizuálně
+Bolest žaludku - kontrolováno palpací
+
+Malárie
+
+Tělesná teplota - 38.5°C až 40°C
+Stav jazyka - normální
+Stav mandlí - normální
+Stav lymfatických uzlin - zvětšené
+Stav krku - normální
+Stav plic - normální
+Stav hlenu - normální
+Stav očí - normální
+Stav nosu - normální
+Stav kůže - vyrážka
+Přítomnost vyrážky - pozitivní
+Přítomnost nekrózy - negativní
+Pocení - intenzivní
+Stav žaludku - bolestivý`
+      },
+      {
+        id: "medicamenta",
+        title: "Medicamenta",
+        category: "Léčiva",
+        accent: "#6b4e8e",
+        images: ["obrazky/Snímek obrazovky 2026-05-08 141254.png", "obrazky/Snímek obrazovky 2026-05-08 141258.png"],
+        content: `Medicamenta
+
+Bylinkový vývar - zmírňuje zažívací potíže, nadýmání nebo křeče. Využívá se při nachlazení nebo chřipce a únavě.
+Celkově posiluje tělo, doporučován při nemoci nebo k obnově síly při vyčerpání.
+
+Čichací sůl „Sal odoratus“ - je rychlým prostředkem pro probouzení lidí, kteří omdleli. Stimulace dýchání, výpary způsobují reflexní nádech což zlepšuje okysličení krve.
+
+Lék na bronchitidu „Medicament ad bronchitidem“ - zklidnění kašle, pomáhá uvolňovat a odstraňovat hlen z průdušek což usnadňuje dýchání.
+
+Lék na chřipku „Syrupus ammonii chloridi“ - snižuje horečku, zmírňuje bolest kloubů, svalů a hlavy.
+
+Lék na rýmu „Rhinorrhea“ - pomáhá otevřít dýchací cesty a ulevit od podráždění. Lék se používá na výplach nosu pro odstranění hlenu ze sliznice.
+
+Lék na svrab „Unguentum sulfuris ad scabiem“ - hlavním cílem tohoto léku je zabít roztoče a jejich vajíčka, což zabrání dalšímu šíření infekce. Zmírnění svědění a zánětu.
+
+Lék na gastroenteritidu „Elixir gastroenteritis“ - zklidnění žaludku a střev, léky snižují křeče a podráždění sliznice žaludku a střev.
+
+Lék na malárii „Medicament contra malaria“ - Léky na malárii pomáhají snižovat cyklické horečky, zimnici a silné pocení. Potlačují parazita Plasmodium, což pomáhá zmírnit projevy nemoci a zabránit dalšímu šíření.
+
+Protijed „Antidotum veneni serpentiorum“ - Protijed využíváme při kousnutí jedovatých hadů, otravách rostlinnými toxiny nebo houbami.`
+      }
+    ];
+
+    const categories = ["Vše", ...Array.from(new Set(chapters.map((chapter) => chapter.category)))];
+    let activeCategory = "Vše";
+
+    const keywordGroups = [
+      {
+        className: "kw-danger",
+        terms: ["sepse", "otrava krve", "gangréna", "infekce", "horečka", "krvácení", "šok", "ztráta krve", "nekróza", "zástava srdce", "dušnost", "ztráta vědomí"]
+      },
+      {
+        className: "kw-care",
+        terms: ["dezinfekce", "antiseptikum", "sterilní", "obvaz", "tlakový obvaz", "znehybnění", "ochlazení", "sledování pacienta", "klid", "tekutiny", "vyčištění rány", "ošetření rány"]
+      },
+      {
+        className: "kw-tool",
+        terms: ["stetoskop", "teploměr", "reflexní kladívko", "zrcátko", "zubní sonda", "skalpel", "pinzeta", "sonda", "nůžky", "špachtle", "škrtidlo", "dlaha", "chirurgická jehla"]
+      },
+      {
+        className: "kw-med",
+        terms: ["morfin", "laudanum", "kokain", "éter", "chloroform", "rajský plyn", "jódová tinktura", "alkohol", "protijed", "antibiotika", "čpavek", "čichací sůl"]
+      }
+    ];
+
+    const keywordTerms = keywordGroups
+      .flatMap((group) => group.terms.map((term) => ({ term, className: group.className })))
+      .sort((a, b) => b.term.length - a.term.length);
+
+    const symptomOptions = [
+      { id: "temp_37", label: "Teplota 37.0 až 37.5 °C" },
+      { id: "temp_38", label: "Teplota 37.0 až 38.0 °C" },
+      { id: "temp_385", label: "Teplota 38.5 až 40 °C" },
+      { id: "white_tongue", label: "Bílý povlak na jazyku" },
+      { id: "normal_tongue", label: "Jazyk normální" },
+      { id: "red_tonsils", label: "Mandle začervenalé" },
+      { id: "normal_tonsils", label: "Mandle normální" },
+      { id: "enlarged_nodes", label: "Lymfatické uzliny zvětšené" },
+      { id: "normal_nodes", label: "Lymfatické uzliny normální" },
+      { id: "sore_throat", label: "Krk bolestivý" },
+      { id: "normal_throat", label: "Krk normální" },
+      { id: "lung_noise", label: "Šelest na plicích" },
+      { id: "normal_lungs", label: "Plíce normální" },
+      { id: "thick_mucus", label: "Hlen hustý" },
+      { id: "normal_mucus", label: "Hlen normální" },
+      { id: "pale_skin", label: "Kůže bledá" },
+      { id: "rash", label: "Vyrážka / pupínky na kůži" },
+      { id: "intense_sweat", label: "Intenzivní pocení" },
+      { id: "stomach_pain", label: "Bolestivý žaludek" },
+      { id: "fast_pulse", label: "Rychlý tep" },
+      { id: "scratching", label: "Pacient se drbe a škrábe" }
+    ];
+
+    const diseases = [
+      {
+        name: "Chřipka",
+        symptoms: ["temp_385", "white_tongue", "red_tonsils", "enlarged_nodes", "sore_throat", "lung_noise", "thick_mucus"],
+        note: "Sedí hlavně vysoká teplota, bílý povlak, začervenalé mandle, zvětšené uzliny, bolestivý krk, šelest a hustý hlen."
+      },
+      {
+        name: "Rýma",
+        symptoms: ["temp_37", "normal_tongue", "normal_tonsils", "normal_nodes", "sore_throat", "normal_lungs", "thick_mucus"],
+        note: "Typicky mírná teplota, bolestivý krk a hustý hlen, jinak většina nálezů normální."
+      },
+      {
+        name: "Gastroenteritida",
+        symptoms: ["temp_38", "normal_tongue", "normal_tonsils", "normal_nodes", "sore_throat", "normal_lungs", "normal_mucus", "pale_skin", "stomach_pain"],
+        note: "V materiálech je klíčová bledá kůže a bolestivý žaludek při teplotě 37 až 38 °C."
+      },
+      {
+        name: "Svrab",
+        symptoms: ["fast_pulse", "rash", "intense_sweat", "scratching"],
+        note: "Sleduj rychlý tep, pupínky nebo vyrážku, intenzivní pocení a to, že se pacient neustále drbe a škrábe."
+      },
+      {
+        name: "Otrava krve",
+        symptoms: ["white_tongue", "enlarged_nodes", "sore_throat", "lung_noise", "fast_pulse", "pale_skin", "rash", "stomach_pain"],
+        note: "Materiály uvádí bílý povlak, zvětšené uzliny, bolestivý krk, šelest, rychlý tep, bledou kůži s vyrážkou a bolest žaludku."
+      },
+      {
+        name: "Malárie",
+        symptoms: ["temp_385", "normal_tongue", "normal_tonsils", "enlarged_nodes", "normal_throat", "normal_lungs", "normal_mucus", "rash", "intense_sweat", "stomach_pain"],
+        note: "Silně sedí vysoká teplota, zvětšené uzliny, vyrážka, intenzivní pocení a bolestivý žaludek."
+      }
+    ];
+
+    const content = document.querySelector("#content");
+    const nav = document.querySelector("#nav");
+    const filters = document.querySelector("#filters");
+    const search = document.querySelector("#search");
+    const count = document.querySelector("#count");
+    const empty = document.querySelector("#empty");
+    const ordinace = document.querySelector("#ordinace");
+    const ordinaceToggle = document.querySelector("#ordinaceToggle");
+    const symptoms = document.querySelector("#symptoms");
+    const clearSymptoms = document.querySelector("#clearSymptoms");
+    const diagnosisResults = document.querySelector("#diagnosisResults");
+
+    function escapeHtml(value) {
+      return value
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function highlight(value, term) {
+      const safe = escapeHtml(value);
+      if (!term) return safe;
+      const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      return safe.replace(new RegExp(`(${escapedTerm})`, "gi"), "<mark>$1</mark>");
+    }
+
+    function highlightKeywords(value, term) {
+      if (term) return highlight(value, term);
+
+      let safe = escapeHtml(value);
+      keywordTerms.forEach((item) => {
+        const escapedTerm = item.term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        safe = safe.replace(new RegExp(escapedTerm, "giu"), (match) => `<span class="kw ${item.className}">${match}</span>`);
+      });
+      return safe;
+    }
+
+    function getSelectedSymptoms() {
+      return Array.from(symptoms.querySelectorAll("input:checked")).map((input) => input.value);
+    }
+
+    function renderSymptoms() {
+      symptoms.innerHTML = symptomOptions.map((symptom) => `
+        <label class="symptom">
+          <input type="checkbox" value="${escapeHtml(symptom.id)}" />
+          <span>${escapeHtml(symptom.label)}</span>
+        </label>
+      `).join("");
+    }
+
+    function renderDiagnosis() {
+      const selected = getSelectedSymptoms();
+
+      if (selected.length === 0) {
+        diagnosisResults.innerHTML = `<div class="diagnosis-card"><h4>Začni vyšetření</h4><p class="muted">Zaklikni alespoň jeden příznak a Ordinace vypočítá nejbližší shody.</p></div>`;
+        return;
+      }
+
+      const results = diseases.map((disease) => {
+        const matched = disease.symptoms.filter((symptom) => selected.includes(symptom));
+        const score = matched.length / disease.symptoms.length;
+        return { ...disease, matched, score };
+      }).filter((disease) => disease.matched.length > 0)
+        .sort((a, b) => b.score - a.score || b.matched.length - a.matched.length);
+
+      if (results.length === 0) {
+        diagnosisResults.innerHTML = `<div class="diagnosis-card"><h4>Žádná shoda</h4><p class="muted">Zkus přidat další zjištěné příznaky.</p></div>`;
+        return;
+      }
+
+      const bestScore = results[0].score;
+      diagnosisResults.innerHTML = results.map((disease) => {
+        const matchedLabels = disease.matched.map((id) => symptomOptions.find((symptom) => symptom.id === id)?.label || id);
+        return `
+          <article class="diagnosis-card ${disease.score === bestScore ? "best" : ""}">
+            <h4>${escapeHtml(disease.name)} <span class="score">${Math.round(disease.score * 100)} %</span></h4>
+            <p>${escapeHtml(disease.note)}</p>
+            <ul class="match-list">
+              ${matchedLabels.map((label) => `<li>${escapeHtml(label)}</li>`).join("")}
+            </ul>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderFilters() {
+      filters.innerHTML = categories.map((category) => (
+        `<button type="button" class="${category === activeCategory ? "active" : ""}" data-category="${escapeHtml(category)}">${escapeHtml(category)}</button>`
+      )).join("");
+    }
+
+    function render() {
+      const term = search.value.trim();
+      const normalizedTerm = term.toLowerCase();
+
+      const visible = chapters.filter((chapter) => {
+        const inCategory = activeCategory === "Vše" || chapter.category === activeCategory;
+        const searchable = `${chapter.title} ${chapter.category} ${chapter.content}`.toLowerCase();
+        return inCategory && (!normalizedTerm || searchable.includes(normalizedTerm));
+      });
+
+      content.innerHTML = visible.map((chapter) => `
+        <article class="card" id="${chapter.id}" style="--accent: ${chapter.accent}">
+          <div class="card-head">
+            <h2>${highlight(chapter.title, term)}</h2>
+            <span class="tag">${escapeHtml(chapter.category)}</span>
+          </div>
+          <pre>${highlightKeywords(chapter.content, term)}</pre>
+          ${chapter.images.length ? `<details>
+            <summary>Původní snímek / snímky</summary>
+            <div class="sources">
+              ${chapter.images.map((image) => `<img src="${escapeHtml(image)}" alt="Zdrojový snímek pro kapitolu ${escapeHtml(chapter.title)}" loading="lazy" />`).join("")}
+            </div>
+          </details>` : ""}
+        </article>
+      `).join("");
+
+      nav.innerHTML = visible.map((chapter) => `<a href="#${chapter.id}">${escapeHtml(chapter.title)}</a>`).join("");
+      count.textContent = `${visible.length} / ${chapters.length} kapitol`;
+      empty.classList.toggle("show", visible.length === 0);
+    }
+
+    filters.addEventListener("click", (event) => {
+      const button = event.target.closest("button[data-category]");
+      if (!button) return;
+      activeCategory = button.dataset.category;
+      renderFilters();
+      render();
+    });
+
+    search.addEventListener("input", render);
+    ordinaceToggle.addEventListener("click", () => {
+      ordinace.classList.toggle("show");
+      ordinaceToggle.classList.toggle("active", ordinace.classList.contains("show"));
+      if (ordinace.classList.contains("show")) {
+        ordinace.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    });
+    symptoms.addEventListener("change", renderDiagnosis);
+    clearSymptoms.addEventListener("click", () => {
+      symptoms.querySelectorAll("input").forEach((input) => {
+        input.checked = false;
+      });
+      renderDiagnosis();
+    });
+
+    renderSymptoms();
+    renderDiagnosis();
+    renderFilters();
+    render();
+  </script>
+</body>
+</html>

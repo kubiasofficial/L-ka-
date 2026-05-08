@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WestHaven Lékař | Rozcestník</title>
+  <style>
+    :root {
+      --ink: #22170f;
+      --paper: #f5e5bf;
+      --paper-light: #fff6de;
+      --gold: #d9ad62;
+      --brown: #6e4b2c;
+      --red: #9f3633;
+      --blue: #315f88;
+      --shadow: 0 22px 60px rgba(0, 0, 0, 0.42);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 26px;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--paper-light);
+      background:
+        radial-gradient(circle at 18% 12%, rgba(217, 173, 98, 0.18), transparent 30rem),
+        radial-gradient(circle at 82% 80%, rgba(49, 95, 136, 0.18), transparent 28rem),
+        linear-gradient(135deg, #130e0a 0%, #2a1d13 55%, #130e0a 100%);
+    }
+
+    .page {
+      width: min(1120px, 100%);
+    }
+
+    header {
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(2.4rem, 7vw, 5.6rem);
+      line-height: 0.9;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 760px;
+      margin: 0;
+      color: #d8c08d;
+      font-size: clamp(1rem, 2vw, 1.22rem);
+      line-height: 1.5;
+    }
+
+    .choices {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .choice {
+      min-height: 310px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 24px;
+      border: 1px solid rgba(217, 173, 98, 0.55);
+      background:
+        linear-gradient(180deg, rgba(255, 246, 222, 0.97), rgba(245, 229, 191, 0.95));
+      color: var(--ink);
+      text-decoration: none;
+      box-shadow: var(--shadow);
+      transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+    }
+
+    .choice:hover {
+      transform: translateY(-4px);
+      border-color: var(--gold);
+      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.52);
+    }
+
+    .choice h2 {
+      margin: 0;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1;
+    }
+
+    .choice p {
+      margin: 14px 0 0;
+      max-width: 430px;
+      color: #5d4329;
+      font-size: 1.05rem;
+      line-height: 1.5;
+    }
+
+    .badge {
+      width: fit-content;
+      min-height: 34px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 12px;
+      border-radius: 999px;
+      font-weight: 700;
+      border: 1px solid rgba(110, 75, 44, 0.35);
+      background: rgba(255, 248, 231, 0.76);
+      color: #3a2818;
+    }
+
+    .arrow {
+      align-self: flex-end;
+      width: 52px;
+      height: 52px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      border: 1px solid rgba(110, 75, 44, 0.35);
+      background: #2d1f14;
+      color: #f7dfad;
+      font-size: 1.8rem;
+      line-height: 1;
+    }
+
+    .manual {
+      border-top: 7px solid var(--blue);
+    }
+
+    .generator {
+      border-top: 7px solid var(--red);
+    }
+
+    footer {
+      margin-top: 18px;
+      color: #bda371;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 760px) {
+      body {
+        display: block;
+      }
+
+      .choices {
+        grid-template-columns: 1fr;
+      }
+
+      .choice {
+        min-height: 240px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <h1>WestHaven Lékař</h1>
+      <p class="subtitle">Hlavní rozcestník pro službu. Vyber si studijní příručky s Ordinací, nebo přejdi rovnou do generátoru lékařské zprávy.</p>
+    </header>
+
+    <main class="choices" aria-label="Rozcestník">
+      <a class="choice manual" href="westhaven-lekar-prirucka.html">
+        <div>
+          <span class="badge">Příručky a Ordinace</span>
+          <h2>Naše příručky</h2>
+          <p>Studijní web z materiálů, vyhledávání, barevné zvýraznění a diagnostika podle zakliknutých příznaků.</p>
+        </div>
+        <span class="arrow" aria-hidden="true">›</span>
+      </a>
+
+      <a class="choice generator" href="generator_lekarske_zpravy_redm.html">
+        <div>
+          <span class="badge">Dokumentace</span>
+          <h2>Náš generátor</h2>
+          <p>Rychlé vytvoření lékařské zprávy pro RedM službu.</p>
+        </div>
+        <span class="arrow" aria-hidden="true">›</span>
+      </a>
+    </main>
+
+    <footer>Soubor: index.html</footer>
+  </div>
+</body>
+</html>

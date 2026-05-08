@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generátor lékařské zprávy | RedM</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      background: #17120c;
+      color: #2b2118;
+      min-height: 100vh;
+      padding: 30px;
+    }
+
+    .app {
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      color: #f3dfb3;
+      text-align: center;
+      margin-bottom: 5px;
+      letter-spacing: 1px;
+    }
+
+    .subtitle {
+      color: #c8aa74;
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 25px;
+    }
+
+    .panel {
+      background: #efe1bd;
+      border: 3px solid #7a5632;
+      border-radius: 10px;
+      padding: 22px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.45);
+    }
+
+    .panel h2 {
+      margin-top: 0;
+      border-bottom: 2px solid #8a6a45;
+      padding-bottom: 8px;
+      color: #3a2818;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-top: 14px;
+      margin-bottom: 5px;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #9b7a52;
+      border-radius: 6px;
+      background: #fff8e6;
+      color: #2b2118;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 15px;
+    }
+
+    textarea {
+      min-height: 78px;
+      resize: vertical;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 6px;
+      padding: 11px 15px;
+      font-weight: bold;
+      font-family: Arial, sans-serif;
+      color: #fff;
+      background: #6f3f1f;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #8a5129;
+      transform: translateY(-1px);
+    }
+
+    .secondary {
+      background: #4c4033;
+    }
+
+    .secondary:hover {
+      background: #645343;
+    }
+
+    .danger {
+      background: #7b2727;
+    }
+
+    .danger:hover {
+      background: #993232;
+    }
+
+    .output-box {
+      background: #fffaf0;
+      border: 1px solid #9b7a52;
+      border-radius: 6px;
+      padding: 15px;
+      white-space: pre-wrap;
+      min-height: 520px;
+      font-family: "Courier New", monospace;
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    .note {
+      font-size: 13px;
+      color: #5c4630;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 900px) {
+      body {
+        padding: 15px;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <h1>Generátor lékařské zprávy</h1>
+    <div class="subtitle">RedM / ordinace / rok 1899</div>
+
+    <div class="layout">
+      <div class="panel">
+        <h2>Údaje o pacientovi</h2>
+
+        <div class="row">
+          <div>
+            <label for="recordNumber">Číslo záznamu</label>
+            <input id="recordNumber" placeholder="např. 156" />
+          </div>
+          <div>
+            <label for="status">Stav při propuštění</label>
+            <select id="status">
+              <option>Stabilizován</option>
+              <option>Zdráv</option>
+              <option>Vážný stav</option>
+              <option>Propuštěn do domácího klidu</option>
+            </select>
+          </div>
+        </div>
+
+        <label for="patientName">Jméno pacienta</label>
+        <input id="patientName" placeholder="např. Samuel Murphy" />
+
+        <div class="row">
+          <div>
+            <label for="date">Datum</label>
+            <input id="date" placeholder="např. 06.05.1899" />
+          </div>
+          <div>
+            <label for="time">Čas</label>
+            <input id="time" placeholder="např. 21:10" />
+          </div>
+        </div>
+
+        <label for="doctor">Ošetřující lékař</label>
+        <input id="doctor" placeholder="např. Aleksandra Smirnovskaja" />
+
+        <label for="diagnosisShort">Krátká diagnóza</label>
+        <input id="diagnosisShort" placeholder="např. Zhmožděniny a odřeniny po pádu z koně" />
+
+        <label for="diagnosisDetail">Diagnóza</label>
+        <textarea id="diagnosisDetail" placeholder="např. Zhmožděniny a odřeniny v oblasti zad a loktů po pádu z koně."></textarea>
+
+        <label for="reason">Důvod vyšetření</label>
+        <textarea id="reason" placeholder="např. Pacient přichází po pádu z koně, udává bolest zad a loktů."></textarea>
+
+        <label for="finding">Objektivní nález</label>
+        <textarea id="finding" placeholder="např. Na zádech a loktech patrné zhmoždění měkkých tkání a povrchové odřeniny..."></textarea>
+
+        <label for="treatment">Poskytnutá léčba a dodatečné informace</label>
+        <textarea id="treatment" placeholder="např. Poraněná místa očištěna a ošetřena. Aplikována mast..."></textarea>
+
+        <label for="recommendation">Doporučení</label>
+        <textarea id="recommendation" placeholder="např. Nařízen klidový režim a omezení fyzické námahy..."></textarea>
+
+        <label for="signature">Podpis / iniciály</label>
+        <input id="signature" placeholder="např. A. S." />
+
+        <div class="buttons">
+          <button onclick="generateReport()">Vygenerovat zprávu</button>
+          <button class="secondary" onclick="copyReport()">Kopírovat zprávu</button>
+          <button class="danger" onclick="clearForm()">Vymazat</button>
+        </div>
+
+        <p class="note">Tip: Výstup si jen zkopíruješ a vložíš do kolonek ve hře.</p>
+      </div>
+
+      <div class="panel">
+        <h2>Hotová lékařská zpráva</h2>
+        <div id="output" class="output-box">Zatím není vygenerováno.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function value(id) {
+      return document.getElementById(id).value.trim();
+    }
+
+    function generateReport() {
+      const recordNumber = value("recordNumber") || "---";
+      const status = value("status") || "Stabilizován";
+      const patientName = value("patientName") || "---";
+      const date = value("date") || "---";
+      const time = value("time") || "---";
+      const doctor = value("doctor") || "---";
+      const diagnosisShort = value("diagnosisShort") || "---";
+      const diagnosisDetail = value("diagnosisDetail") || diagnosisShort;
+      const reason = value("reason") || "---";
+      const finding = value("finding") || "---";
+      const treatment = value("treatment") || "---";
+      const recommendation = value("recommendation") || "---";
+      const signature = value("signature") || doctor;
+
+      const report = `KOPIE - ZÁZNAM - ${recordNumber}
+
+STAV PŘI PROPUŠTĚNÍ:
+${status}
+
+JMÉNO PACIENTA:
+${patientName}
+
+OŠETŘUJÍCÍ LÉKAŘ:
+${doctor}
+
+DATUM A ČAS:
+${date}, ${time}
+
+DIAGNÓZA:
+${diagnosisShort}
+
+POSKYTNUTÁ PÉČE / LÉČBA:
+
+Diagnóza:
+${diagnosisDetail}
+
+Důvod vyšetření:
+${reason}
+
+Objektivní nález:
+${finding}
+
+Poskytnutá léčba a dodatečné informace:
+${treatment}
+
+DOPORUČENÍ:
+${recommendation}
+
+Ošetřující lékař:
+${signature}`;
+
+      document.getElementById("output").textContent = report;
+    }
+
+    function copyReport() {
+      const report = document.getElementById("output").textContent;
+
+      if (!report || report === "Zatím není vygenerováno.") {
+        alert("Nejdřív vygeneruj zprávu.");
+        return;
+      }
+
+      navigator.clipboard.writeText(report).then(() => {
+        alert("Zpráva zkopírována do schránky.");
+      }).catch(() => {
+        alert("Kopírování se nepovedlo. Označ text ručně a zkopíruj ho přes CTRL + C.");
+      });
+    }
+
+    function clearForm() {
+      const inputs = document.querySelectorAll("input, textarea");
+      inputs.forEach(input => input.value = "");
+      document.getElementById("status").value = "Stabilizován";
+      document.getElementById("output").textContent = "Zatím není vygenerováno.";
+    }
+  </script>
+</body>
+</html>
