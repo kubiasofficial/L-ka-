@@ -32,6 +32,28 @@
         linear-gradient(135deg, #16110d 0%, #2a1f16 54%, #16110d 100%);
       color: var(--ink);
       min-height: 100vh;
+      animation: pageFade 520ms ease both;
+    }
+
+    @keyframes pageFade {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes riseIn {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes softPulse {
+      0%, 100% { box-shadow: 0 0 0 rgba(216, 173, 98, 0); }
+      50% { box-shadow: 0 0 0 4px rgba(216, 173, 98, 0.14); }
     }
 
     .shell {
@@ -58,6 +80,26 @@
       color: #d9c18d;
       font-size: 1.08rem;
       line-height: 1.55;
+    }
+
+    .menu-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      margin-bottom: 18px;
+      padding: 0 12px;
+      border: 1px solid rgba(216, 173, 98, 0.5);
+      background: rgba(51, 36, 22, 0.88);
+      color: #f7dfad;
+      text-decoration: none;
+      font-weight: 700;
+      transition: transform 150ms ease, background 150ms ease, color 150ms ease;
+    }
+
+    .menu-link:hover {
+      transform: translateY(-1px);
+      background: var(--gold);
+      color: #21160d;
     }
 
     .toolbar {
@@ -127,6 +169,7 @@
       padding: 0 12px;
       font: 700 0.9rem Georgia, "Times New Roman", serif;
       cursor: pointer;
+      transition: transform 150ms ease, background 150ms ease, color 150ms ease, border-color 150ms ease;
     }
 
     button:hover,
@@ -134,6 +177,10 @@
       background: var(--gold);
       color: #21160d;
       border-color: var(--gold);
+    }
+
+    button:hover {
+      transform: translateY(-1px);
     }
 
     .layout {
@@ -167,12 +214,14 @@
       padding: 8px 9px;
       border-left: 3px solid transparent;
       line-height: 1.25;
+      transition: color 150ms ease, background 150ms ease, border-color 150ms ease, transform 150ms ease;
     }
 
     nav a:hover {
       color: #fff5dc;
       border-left-color: var(--gold);
       background: rgba(255, 245, 220, 0.06);
+      transform: translateX(3px);
     }
 
     main {
@@ -187,9 +236,17 @@
         linear-gradient(180deg, var(--paper-2), var(--paper));
       box-shadow: var(--shadow);
       padding: 20px 20px 18px 27px;
+      animation: riseIn 420ms ease both;
+      transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
     }
 
     .card.hidden { display: none; }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: var(--gold);
+      box-shadow: 0 22px 60px rgba(0, 0, 0, 0.42);
+    }
 
     .card-head {
       display: flex;
@@ -241,6 +298,11 @@
       cursor: pointer;
       font-weight: 700;
       color: #5c3a20;
+      transition: color 150ms ease;
+    }
+
+    summary:hover {
+      color: #2c1b10;
     }
 
     .sources {
@@ -261,6 +323,7 @@
       background: #ffe070;
       color: #1b130c;
       padding: 0 2px;
+      animation: softPulse 900ms ease 1;
     }
 
     .kw {
@@ -268,6 +331,11 @@
       border-radius: 4px;
       padding: 0 3px;
       font-weight: 700;
+      transition: background 150ms ease, box-shadow 150ms ease;
+    }
+
+    .kw:hover {
+      box-shadow: 0 0 0 3px rgba(216, 173, 98, 0.15);
     }
 
     .kw-danger {
@@ -303,7 +371,10 @@
       padding: 18px;
     }
 
-    .ordinace.show { display: block; }
+    .ordinace.show {
+      display: block;
+      animation: riseIn 320ms ease both;
+    }
 
     .ordinace-head {
       display: flex;
@@ -343,6 +414,13 @@
       border: 1px solid rgba(110, 75, 44, 0.34);
       background: rgba(255, 248, 231, 0.72);
       cursor: pointer;
+      transition: transform 150ms ease, background 150ms ease, border-color 150ms ease;
+    }
+
+    .symptom:hover {
+      transform: translateY(-1px);
+      border-color: rgba(110, 75, 44, 0.62);
+      background: rgba(255, 248, 231, 0.95);
     }
 
     .symptom input {
@@ -369,6 +447,7 @@
       border: 1px solid rgba(110, 75, 44, 0.42);
       background: #fff8e7;
       padding: 13px;
+      animation: riseIn 240ms ease both;
     }
 
     .diagnosis-card.best {
@@ -398,6 +477,17 @@
 
     .muted {
       color: #765b3b;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 1ms !important;
+      }
     }
 
     .empty {
@@ -430,6 +520,7 @@
 <body>
   <div class="shell">
     <header>
+      <a class="menu-link" href="index.html">Zpět do menu</a>
       <h1>WestHaven lékařská příručka</h1>
       <p class="subtitle">Studijní web z tvých snímků. Text je přepsaný bez zkracování, rozdělený podle témat a doplněný vyhledáváním. U každé kapitoly můžeš rozbalit původní obrázek pro kontrolu.</p>
     </header>

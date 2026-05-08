@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WestHaven Lékař | Jak na to</title>
+  <style>
+    :root {
+      --ink: #22170f;
+      --paper: #f5e5bf;
+      --paper-light: #fff6de;
+      --gold: #d9ad62;
+      --brown: #6e4b2c;
+      --green: #39795b;
+      --blue: #315f88;
+      --red: #9f3633;
+      --shadow: 0 22px 60px rgba(0, 0, 0, 0.42);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--paper-light);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(217, 173, 98, 0.18), transparent 30rem),
+        radial-gradient(circle at 86% 75%, rgba(57, 121, 91, 0.14), transparent 30rem),
+        linear-gradient(135deg, #130e0a 0%, #2a1d13 55%, #130e0a 100%);
+      animation: pageFade 520ms ease both;
+    }
+
+    @keyframes pageFade {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes riseIn {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .shell {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 56px;
+    }
+
+    header {
+      padding: 18px 0 22px;
+    }
+
+    .back {
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      padding: 0 12px;
+      border: 1px solid rgba(217, 173, 98, 0.5);
+      color: #f7dfad;
+      text-decoration: none;
+      background: rgba(51, 36, 22, 0.88);
+      font-weight: 700;
+      transition: transform 150ms ease, background 150ms ease;
+    }
+
+    .back:hover {
+      transform: translateY(-1px);
+      background: var(--gold);
+      color: #21160d;
+    }
+
+    h1 {
+      margin: 24px 0 10px;
+      font-size: clamp(2.4rem, 7vw, 5.2rem);
+      line-height: 0.92;
+    }
+
+    .subtitle {
+      max-width: 790px;
+      margin: 0;
+      color: #d8c08d;
+      font-size: 1.15rem;
+      line-height: 1.55;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .card {
+      padding: 20px;
+      border: 1px solid rgba(217, 173, 98, 0.48);
+      border-top: 7px solid var(--accent);
+      background: linear-gradient(180deg, rgba(255, 246, 222, 0.98), rgba(245, 229, 191, 0.96));
+      color: var(--ink);
+      box-shadow: var(--shadow);
+      animation: riseIn 420ms ease both;
+    }
+
+    .card:nth-child(2) { animation-delay: 70ms; }
+    .card:nth-child(3) { animation-delay: 140ms; }
+    .card:nth-child(4) { animation-delay: 210ms; }
+
+    .card h2 {
+      margin: 0 0 10px;
+      font-size: 1.75rem;
+      line-height: 1.05;
+    }
+
+    .card p {
+      margin: 0;
+      color: #5d4329;
+      line-height: 1.55;
+    }
+
+    .card ul {
+      margin: 12px 0 0;
+      padding-left: 20px;
+      color: #3a2818;
+      line-height: 1.55;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0 14px;
+      border: 1px solid rgba(217, 173, 98, 0.52);
+      background: #332416;
+      color: #f7dfad;
+      text-decoration: none;
+      font-weight: 700;
+      transition: transform 150ms ease, background 150ms ease, color 150ms ease;
+    }
+
+    .action:hover {
+      transform: translateY(-1px);
+      background: var(--gold);
+      color: #21160d;
+    }
+
+    @media (max-width: 780px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 1ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <a class="back" href="index.html">Zpět na hlavní menu</a>
+      <h1>Jak na to</h1>
+      <p class="subtitle">Krátký návod pro každého, kdo web otevře poprvé. Cílem je rychle najít postup, naučit se nemoc nebo vyplnit zprávu po zásahu.</p>
+    </header>
+
+    <main class="grid">
+      <section class="card" style="--accent: var(--blue)">
+        <h2>Naše příručky</h2>
+        <p>Příručka je hlavní studijní část. Najdeš v ní pravidla služby, postupy ošetření, nemoci, diagnostiku, léčiva, ceník a RP ukázky pro /me a /do.</p>
+        <ul>
+          <li>Nahoře použij vyhledávání, třeba „morfin“, „sepse“, „střelná rána“ nebo „svrab“.</li>
+          <li>Filtry rozdělí obsah podle témat, například Pravidla, Poranění, Nemoci nebo Léčiva.</li>
+          <li>Barevná slova ti rychle ukážou rizika, nástroje, léčiva a kroky péče.</li>
+        </ul>
+      </section>
+
+      <section class="card" style="--accent: var(--green)">
+        <h2>Ordinace</h2>
+        <p>V příručce klikni na tlačítko Ordinace. Zaklikáš příznaky, které zjistíš při vyšetření, a web ti seřadí možné nemoci podle shody.</p>
+        <ul>
+          <li>Hodí se hlavně pro chřipku, rýmu, gastroenteritidu, svrab, otravu krve a malárii.</li>
+          <li>Výsledek ber jako pomůcku pro RP, ne jako náhradu vlastního úsudku.</li>
+          <li>Když si nejsi jistý, přidej další zjištěné příznaky a porovnej shodu.</li>
+        </ul>
+      </section>
+
+      <section class="card" style="--accent: var(--red)">
+        <h2>Náš generátor</h2>
+        <p>Generátor slouží k rychlému sepsání lékařské zprávy. Po vyšetření vyplníš údaje a připravíš text pro použití ve službě.</p>
+        <ul>
+          <li>Používej ho po zákroku nebo vyšetření, když chceš mít zápis čistý a jednotný.</li>
+          <li>Nejdřív si v příručce ověř postup, pak v generátoru vytvoř zprávu.</li>
+          <li>Text si před odesláním zkontroluj podle skutečného RP průběhu.</li>
+        </ul>
+      </section>
+
+      <section class="card" style="--accent: var(--gold)">
+        <h2>Doporučený postup učení</h2>
+        <p>Začni pravidly služby, potom si projdi akutní zranění a nakonec nemoci s medikací. Při službě hledej konkrétní výraz místo ručního procházení celé příručky.</p>
+        <ul>
+          <li>Pro akutní situace hledej slova jako „krvácení“, „škrtidlo“, „zlomenina“ nebo „popáleniny“.</li>
+          <li>Pro nemoci používej Ordinaci a diagnostické hodnoty.</li>
+          <li>Pro RP formulace hledej „/me“, „/do“, „stetoskop“ nebo „medikace“.</li>
+        </ul>
+      </section>
+    </main>
+
+    <div class="actions">
+      <a class="action" href="westhaven-lekar-prirucka.html">Otevřít příručky</a>
+      <a class="action" href="generator_lekarske_zpravy_redm.html">Otevřít generátor</a>
+      <a class="action" href="index.html">Hlavní menu</a>
+    </div>
+  </div>
+</body>
+</html>

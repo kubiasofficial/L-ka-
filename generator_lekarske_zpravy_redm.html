@@ -24,6 +24,27 @@
       margin: 0 auto;
     }
 
+    .menu-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      padding: 0 12px;
+      border: 1px solid #9b7a52;
+      border-radius: 6px;
+      background: #332416;
+      color: #f3dfb3;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+      transition: transform 150ms ease, background 150ms ease, color 150ms ease;
+    }
+
+    .menu-link:hover {
+      transform: translateY(-1px);
+      background: #d8ad62;
+      color: #21160d;
+    }
+
     h1 {
       color: #f3dfb3;
       text-align: center;
@@ -165,6 +186,7 @@
 
 <body>
   <div class="app">
+    <a class="menu-link" href="index.html">Zpět do menu</a>
     <h1>Generátor lékařské zprávy</h1>
     <div class="subtitle">RedM / ordinace / rok 1899</div>
 
