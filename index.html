@@ -53,11 +53,12 @@
     }
 
     .page {
-      width: min(1120px, 100%);
+      width: min(900px, 100%);
     }
 
     header {
       margin-bottom: 24px;
+      text-align: center;
     }
 
     h1 {
@@ -68,100 +69,96 @@
     }
 
     .subtitle {
-      max-width: 760px;
+      max-width: 720px;
       margin: 0;
+      margin-inline: auto;
       color: #d8c08d;
       font-size: clamp(1rem, 2vw, 1.22rem);
       line-height: 1.5;
     }
 
-    .choices {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 18px;
-    }
-
-    .choice {
-      min-height: 310px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 24px;
+    .menu-board {
+      position: relative;
+      padding: clamp(22px, 4vw, 34px);
       border: 1px solid rgba(217, 173, 98, 0.55);
       background:
         linear-gradient(180deg, rgba(255, 246, 222, 0.97), rgba(245, 229, 191, 0.95));
       color: var(--ink);
-      text-decoration: none;
       box-shadow: var(--shadow);
-      transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+      animation: riseIn 420ms ease both;
+    }
+
+    .menu-board::before,
+    .menu-board::after {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      pointer-events: none;
+      border: 1px solid rgba(110, 75, 44, 0.28);
+    }
+
+    .menu-board::after {
+      inset: 18px;
+      border-style: dotted;
+      opacity: 0.58;
+    }
+
+    .menu-mark {
+      position: relative;
+      z-index: 1;
+      width: fit-content;
+      margin: 0 auto 18px;
+      padding: 5px 18px;
+      border-top: 1px solid rgba(110, 75, 44, 0.42);
+      border-bottom: 1px solid rgba(110, 75, 44, 0.42);
+      color: #5d4329;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0;
+      font-size: 0.86rem;
+    }
+
+    .choices {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .choice {
+      min-width: min(100%, 250px);
+      min-height: 54px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 20px;
+      border: 1px solid rgba(62, 38, 20, 0.7);
+      background:
+        linear-gradient(180deg, rgba(102, 65, 35, 0.96), rgba(45, 31, 20, 0.98));
+      text-decoration: none;
+      color: #f7dfad;
+      font-size: clamp(1.05rem, 2vw, 1.28rem);
+      font-weight: 900;
+      text-align: center;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 246, 222, 0.24),
+        0 10px 22px rgba(0, 0, 0, 0.26);
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
       animation: riseIn 420ms ease both;
     }
 
     .choice:nth-child(2) { animation-delay: 80ms; }
     .choice:nth-child(3) { animation-delay: 160ms; }
     .choice:nth-child(4) { animation-delay: 240ms; }
+    .choice:nth-child(5) { animation-delay: 320ms; }
 
     .choice:hover {
-      transform: translateY(-4px);
+      transform: translateY(-2px);
       border-color: var(--gold);
-      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.52);
-    }
-
-    .choice h2 {
-      margin: 0;
-      font-size: clamp(1.8rem, 4vw, 3rem);
-      line-height: 1;
-    }
-
-    .choice p {
-      margin: 14px 0 0;
-      max-width: 430px;
-      color: #5d4329;
-      font-size: 1.05rem;
-      line-height: 1.5;
-    }
-
-    .badge {
-      width: fit-content;
-      min-height: 34px;
-      display: inline-flex;
-      align-items: center;
-      padding: 0 12px;
-      border-radius: 999px;
-      font-weight: 700;
-      border: 1px solid rgba(110, 75, 44, 0.35);
-      background: rgba(255, 248, 231, 0.76);
-      color: #3a2818;
-    }
-
-    .arrow {
-      align-self: flex-end;
-      width: 52px;
-      height: 52px;
-      display: grid;
-      place-items: center;
-      border-radius: 50%;
-      border: 1px solid rgba(110, 75, 44, 0.35);
-      background: #2d1f14;
-      color: #f7dfad;
-      font-size: 1.8rem;
-      line-height: 1;
-    }
-
-    .manual {
-      border-top: 7px solid var(--blue);
-    }
-
-    .generator {
-      border-top: 7px solid var(--red);
-    }
-
-    .help {
-      border-top: 7px solid var(--gold);
-    }
-
-    .buyout {
-      border-top: 7px solid var(--green);
+      background:
+        linear-gradient(180deg, rgba(132, 87, 47, 0.98), rgba(57, 38, 23, 0.99));
     }
 
     footer {
@@ -187,7 +184,9 @@
 
     .updates-panel {
       position: relative;
-      width: min(560px, 100%);
+      width: min(680px, 100%);
+      max-height: min(82vh, 760px);
+      overflow: auto;
       padding: 28px;
       border: 1px solid rgba(217, 173, 98, 0.72);
       border-top: 7px solid var(--gold);
@@ -228,11 +227,21 @@
     }
 
     .updates-list {
-      margin: 0;
+      margin: 0 0 18px;
       padding-left: 22px;
       color: #4e3823;
       font-size: 1.05rem;
       line-height: 1.55;
+    }
+
+    .updates-block {
+      padding-top: 16px;
+      border-top: 1px solid rgba(110, 75, 44, 0.24);
+    }
+
+    .updates-block:first-of-type {
+      padding-top: 0;
+      border-top: 0;
     }
 
     @media (max-width: 760px) {
@@ -240,18 +249,8 @@
         display: block;
       }
 
-      .choices {
-        grid-template-columns: 1fr;
-      }
-
       .choice {
-        min-height: 240px;
-      }
-    }
-
-    @media (max-width: 1120px) and (min-width: 761px) {
-      .choices {
-        grid-template-columns: 1fr 1fr;
+        width: 100%;
       }
     }
 
@@ -270,45 +269,32 @@
   <div class="page">
     <header>
       <h1>WestHaven Lékař</h1>
-      <p class="subtitle">Hlavní rozcestník pro službu. Vyber si studijní příručky s Ordinací, generátor lékařské zprávy, návod nebo aktuální výkup surovin.</p>
+      <p class="subtitle">Hlavní rozcestník pro službu ve stylu úřední vývěsky roku 1899.</p>
     </header>
 
-    <main class="choices" aria-label="Rozcestník">
+    <main class="menu-board" aria-label="Rozcestník">
+      <div class="menu-mark">WestHaven Medical Office</div>
+      <nav class="choices">
       <a class="choice manual" href="westhaven-lekar-prirucka.html">
-        <div>
-          <span class="badge">Příručky a Ordinace</span>
-          <h2>Naše příručky</h2>
-          <p>Studijní web z materiálů, vyhledávání, barevné zvýraznění a diagnostika podle zakliknutých příznaků.</p>
-        </div>
-        <span class="arrow" aria-hidden="true">›</span>
+        Příručky a Ordinace
       </a>
 
       <a class="choice generator" href="generator_lekarske_zpravy_redm.html">
-        <div>
-          <span class="badge">Dokumentace</span>
-          <h2>Náš generátor</h2>
-          <p>Rychlé vytvoření lékařské zprávy pro RedM službu.</p>
-        </div>
-        <span class="arrow" aria-hidden="true">›</span>
+        Generátor zprávy
       </a>
 
       <a class="choice help" href="jak-na-to.html">
-        <div>
-          <span class="badge">Návod</span>
-          <h2>Jak na to</h2>
-          <p>Krátké vysvětlení, kde co najít, jak používat vyhledávání, Ordinaci a generátor zpráv.</p>
-        </div>
-        <span class="arrow" aria-hidden="true">›</span>
+        Jak na to
       </a>
 
       <a class="choice buyout" href="vykup.html">
-        <div>
-          <span class="badge">Výkup</span>
-          <h2>Výkup surovin</h2>
-          <p>Přehledný ceník státních doktorů pro byliny, suroviny a domluvené farmářské položky.</p>
-        </div>
-        <span class="arrow" aria-hidden="true">›</span>
+        Výkup surovin
       </a>
+
+      <a class="choice chamber" href="lekarska-komora.html">
+        Lékařská komora
+      </a>
+      </nav>
     </main>
 
     <footer>Soubor: index.html</footer>
@@ -317,20 +303,32 @@
   <div class="updates-modal" id="updatesModal" role="dialog" aria-modal="true" aria-labelledby="updatesTitle" hidden>
     <section class="updates-panel">
       <button class="updates-close" id="updatesClose" type="button" aria-label="Zavřít dnešní opravy">&times;</button>
-      <h2 id="updatesTitle">Aktualizace 15.5.2026</h2>
-      <p class="updates-date">15. 05. 2026</p>
-      <ul class="updates-list">
-        <li>Na hlavní stránku přidané nové tlačítko Výkup.</li>
-        <li>Vytvořený samostatný přehledný ceník výkupu surovin podle dodaného obrázku.</li>
-        <li>Hlavní menu je upravené na čtyři sladěné karty bez změny stávajících odkazů.</li>
-      </ul>
+      <h2 id="updatesTitle">Aktualizace</h2>
+      <div class="updates-block">
+        <p class="updates-date">15. 05. 2026</p>
+        <ul class="updates-list">
+          <li>Hlavní menu převedené na dobová tlačítka ve stylu roku 1899.</li>
+          <li>Přidané nové tlačítko a stránka Lékařská komora s hierarchií vedení.</li>
+          <li>Výkup a Lékařská komora doplněné do návodu Jak na to.</li>
+          <li>Update okno je nově přehlednější a obsahuje historii posledních změn.</li>
+          <li>Texty upravených stránek jsou sjednocené v UTF-8.</li>
+        </ul>
+      </div>
+      <div class="updates-block">
+        <p class="updates-date">14. 05. 2026</p>
+        <ul class="updates-list">
+          <li>Aktualizovaný ceník v lékařské příručce.</li>
+          <li>Přidaný samostatný nadpis Ceník pro lepší přehlednost.</li>
+          <li>Ceník převedený do tabulky Služba, Cena a Limit / poznámka.</li>
+        </ul>
+      </div>
     </section>
   </div>
 
   <script>
     const updatesModal = document.getElementById("updatesModal");
     const updatesClose = document.getElementById("updatesClose");
-    const updatesKey = "westhaven-updates-2026-05-15";
+    const updatesKey = "westhaven-updates-2026-05-15-menu-komora";
 
     function closeUpdatesModal() {
       updatesModal.hidden = true;
