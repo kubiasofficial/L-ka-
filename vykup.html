@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WestHaven Lékař | Výkup surovin</title>
+  <style>
+    :root {
+      --ink: #22170f;
+      --paper: #f2dfb6;
+      --paper-light: #fff5dc;
+      --gold: #d9ad62;
+      --brown: #6e4b2c;
+      --green: #39795b;
+      --shadow: 0 22px 60px rgba(0, 0, 0, 0.42);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--paper-light);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(217, 173, 98, 0.18), transparent 30rem),
+        radial-gradient(circle at 86% 78%, rgba(57, 121, 91, 0.16), transparent 30rem),
+        linear-gradient(135deg, #130e0a 0%, #2a1d13 55%, #130e0a 100%);
+      animation: pageFade 520ms ease both;
+    }
+
+    @keyframes pageFade {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes riseIn {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .shell {
+      width: min(1080px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 56px;
+    }
+
+    header {
+      padding: 18px 0 22px;
+    }
+
+    .back {
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      padding: 0 12px;
+      border: 1px solid rgba(217, 173, 98, 0.5);
+      background: rgba(51, 36, 22, 0.88);
+      color: #f7dfad;
+      text-decoration: none;
+      font-weight: 700;
+      transition: transform 150ms ease, background 150ms ease, color 150ms ease;
+    }
+
+    .back:hover {
+      transform: translateY(-1px);
+      background: var(--gold);
+      color: #21160d;
+    }
+
+    h1 {
+      margin: 24px 0 10px;
+      font-size: clamp(2.5rem, 7vw, 5.2rem);
+      line-height: 0.92;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 760px;
+      margin: 0;
+      color: #d8c08d;
+      font-size: 1.15rem;
+      line-height: 1.55;
+    }
+
+    .notice {
+      position: relative;
+      margin-top: 24px;
+      padding: clamp(22px, 5vw, 44px);
+      border: 1px solid rgba(86, 55, 30, 0.65);
+      border-top: 8px solid var(--green);
+      background:
+        linear-gradient(rgba(255, 246, 222, 0.9), rgba(242, 223, 182, 0.94)),
+        radial-gradient(circle at 18% 18%, rgba(110, 75, 44, 0.18), transparent 18rem),
+        radial-gradient(circle at 82% 82%, rgba(57, 121, 91, 0.12), transparent 18rem);
+      color: var(--ink);
+      box-shadow: var(--shadow);
+      animation: riseIn 420ms ease both;
+      overflow: hidden;
+    }
+
+    .notice::before,
+    .notice::after {
+      content: "";
+      position: absolute;
+      inset: 14px;
+      pointer-events: none;
+      border: 2px solid rgba(68, 43, 22, 0.32);
+    }
+
+    .notice::after {
+      inset: 22px;
+      border-width: 1px;
+      border-color: rgba(68, 43, 22, 0.22);
+    }
+
+    .notice-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .ribbon {
+      width: fit-content;
+      margin: 0 auto 18px;
+      padding: 9px 26px;
+      border: 1px solid rgba(68, 43, 22, 0.36);
+      background: rgba(57, 121, 91, 0.14);
+      color: #2f2419;
+      text-align: center;
+      font-size: clamp(1.7rem, 5vw, 3rem);
+      font-weight: 900;
+      line-height: 1;
+      text-transform: uppercase;
+      box-shadow: inset 0 0 0 1px rgba(255, 248, 231, 0.55);
+    }
+
+    .notice h2 {
+      margin: 0 0 18px;
+      text-align: center;
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      line-height: 1;
+    }
+
+    .price-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 34px;
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    .price-column + .price-column {
+      border-left: 1px dotted rgba(68, 43, 22, 0.55);
+      padding-left: 34px;
+    }
+
+    .price-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 14px;
+      align-items: baseline;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(110, 75, 44, 0.16);
+      font-size: clamp(1.05rem, 2.4vw, 1.35rem);
+      line-height: 1.2;
+    }
+
+    .price-row span:first-child {
+      font-weight: 700;
+    }
+
+    .price {
+      color: #4d351f;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .arranged {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+
+    .arranged .price {
+      white-space: normal;
+      font-size: 0.92em;
+    }
+
+    .contact {
+      max-width: 760px;
+      margin: 32px auto 0;
+      padding-top: 24px;
+      border-top: 1px solid rgba(68, 43, 22, 0.32);
+      text-align: center;
+    }
+
+    .contact h3 {
+      margin: 0;
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      line-height: 1.05;
+    }
+
+    .contact p {
+      margin: 8px 0 0;
+      color: #4d351f;
+      font-size: clamp(1.05rem, 2.5vw, 1.45rem);
+      line-height: 1.35;
+      font-weight: 700;
+    }
+
+    @media (max-width: 760px) {
+      .price-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .price-column + .price-column {
+        margin-top: 8px;
+        padding-left: 0;
+        border-left: 0;
+      }
+
+      .notice {
+        padding: 24px 18px;
+      }
+
+      .notice::before {
+        inset: 10px;
+      }
+
+      .notice::after {
+        display: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 1ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <a class="back" href="index.html">Zpět na hlavní menu</a>
+      <h1>Výkup surovin</h1>
+      <p class="subtitle">Aktuální výkupní ceník pro státní doktory. Položky s poznámkou „dle“ se řeší podle domluvy s příslušným řemeslem nebo farmou.</p>
+    </header>
+
+    <main class="notice" aria-labelledby="buyoutTitle">
+      <div class="notice-inner">
+        <div class="ribbon" aria-hidden="true">Výkup surovin</div>
+        <h2 id="buyoutTitle">Státní doktoři</h2>
+
+        <div class="price-grid">
+          <div class="price-column">
+            <div class="price-row"><span>Plástve medu</span><span class="price">0,30$</span></div>
+            <div class="price-row"><span>Aloe vera</span><span class="price">0,20$</span></div>
+            <div class="price-row"><span>Kosti / drcené kosti</span><span class="price">0,20$</span></div>
+            <div class="price-row"><span>Kůra ze stromů</span><span class="price">0,10$</span></div>
+            <div class="price-row"><span>Levandule</span><span class="price">0,20$</span></div>
+            <div class="price-row"><span>Směs bylinek</span><span class="price">0,10$</span></div>
+            <div class="price-row"><span>Pampeliška</span><span class="price">0,20$</span></div>
+            <div class="price-row"><span>Cukr</span><span class="price">0,20$</span></div>
+            <div class="price-row"><span>Vydělaná kůže</span><span class="price">0,80$</span></div>
+            <div class="price-row"><span>Hadí jed</span><span class="price">0,30$</span></div>
+          </div>
+
+          <div class="price-column">
+            <div class="price-row"><span>Sůl</span><span class="price">0,10$</span></div>
+            <div class="price-row"><span>Síra</span><span class="price">0,35$</span></div>
+            <div class="price-row"><span>Uhlí</span><span class="price">0,30$</span></div>
+            <div class="price-row"><span>Máta</span><span class="price">0,20$</span></div>
+            <div class="price-row arranged"><span>Nezralé makovice &amp; mák</span><span class="price">dle farem</span></div>
+            <div class="price-row arranged"><span>Vazelína</span><span class="price">dle olejářek</span></div>
+            <div class="price-row"><span>Heřmánek</span><span class="price">0,20$</span></div>
+            <div class="price-row arranged"><span>Látka</span><span class="price">dle krejčí</span></div>
+          </div>
+        </div>
+
+        <section class="contact" aria-label="Kontakt na státního lékárníka">
+          <h3>Státní lékárník<br />Arthur Caldwell</h3>
+          <p>Telegram 18685</p>
+          <p>Zdržuj se BW budova PHARMACIES vedle ordinace doktora.</p>
+        </section>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

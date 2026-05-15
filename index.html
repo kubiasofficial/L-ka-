@@ -13,6 +13,7 @@
       --brown: #6e4b2c;
       --red: #9f3633;
       --blue: #315f88;
+      --green: #39795b;
       --shadow: 0 22px 60px rgba(0, 0, 0, 0.42);
     }
 
@@ -76,7 +77,7 @@
 
     .choices {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 18px;
     }
 
@@ -98,6 +99,7 @@
 
     .choice:nth-child(2) { animation-delay: 80ms; }
     .choice:nth-child(3) { animation-delay: 160ms; }
+    .choice:nth-child(4) { animation-delay: 240ms; }
 
     .choice:hover {
       transform: translateY(-4px);
@@ -156,6 +158,10 @@
 
     .help {
       border-top: 7px solid var(--gold);
+    }
+
+    .buyout {
+      border-top: 7px solid var(--green);
     }
 
     footer {
@@ -243,14 +249,9 @@
       }
     }
 
-    @media (max-width: 980px) and (min-width: 761px) {
+    @media (max-width: 1120px) and (min-width: 761px) {
       .choices {
         grid-template-columns: 1fr 1fr;
-      }
-
-      .help {
-        grid-column: 1 / -1;
-        min-height: 230px;
       }
     }
 
@@ -269,7 +270,7 @@
   <div class="page">
     <header>
       <h1>WestHaven Lékař</h1>
-      <p class="subtitle">Hlavní rozcestník pro službu. Vyber si studijní příručky s Ordinací, nebo přejdi rovnou do generátoru lékařské zprávy.</p>
+      <p class="subtitle">Hlavní rozcestník pro službu. Vyber si studijní příručky s Ordinací, generátor lékařské zprávy, návod nebo aktuální výkup surovin.</p>
     </header>
 
     <main class="choices" aria-label="Rozcestník">
@@ -299,6 +300,15 @@
         </div>
         <span class="arrow" aria-hidden="true">›</span>
       </a>
+
+      <a class="choice buyout" href="vykup.html">
+        <div>
+          <span class="badge">Výkup</span>
+          <h2>Výkup surovin</h2>
+          <p>Přehledný ceník státních doktorů pro byliny, suroviny a domluvené farmářské položky.</p>
+        </div>
+        <span class="arrow" aria-hidden="true">›</span>
+      </a>
     </main>
 
     <footer>Soubor: index.html</footer>
@@ -307,14 +317,12 @@
   <div class="updates-modal" id="updatesModal" role="dialog" aria-modal="true" aria-labelledby="updatesTitle" hidden>
     <section class="updates-panel">
       <button class="updates-close" id="updatesClose" type="button" aria-label="Zavřít dnešní opravy">&times;</button>
-      <h2 id="updatesTitle">Aktualizace 14.5.2026</h2>
-      <p class="updates-date">14. 05. 2026</p>
+      <h2 id="updatesTitle">Aktualizace 15.5.2026</h2>
+      <p class="updates-date">15. 05. 2026</p>
       <ul class="updates-list">
-        <li>Aktualizovaný ceník v lékařské příručce.</li>
-        <li>Přidaný samostatný nadpis Ceník pro lepší přehlednost.</li>
-        <li>Odstraněné staré a neaktuální ceny u obvazů, ošetření a prodávaných věcí.</li>
-        <li>Ceník je nově převedený do tabulky Služba, Cena a Limit / poznámka.</li>
-        <li>Chirurgický zákrok za 15 Dolárov je barevně zvýrazněný.</li>
+        <li>Na hlavní stránku přidané nové tlačítko Výkup.</li>
+        <li>Vytvořený samostatný přehledný ceník výkupu surovin podle dodaného obrázku.</li>
+        <li>Hlavní menu je upravené na čtyři sladěné karty bez změny stávajících odkazů.</li>
       </ul>
     </section>
   </div>
@@ -322,7 +330,7 @@
   <script>
     const updatesModal = document.getElementById("updatesModal");
     const updatesClose = document.getElementById("updatesClose");
-    const updatesKey = "westhaven-updates-2026-05-14";
+    const updatesKey = "westhaven-updates-2026-05-15";
 
     function closeUpdatesModal() {
       updatesModal.hidden = true;
