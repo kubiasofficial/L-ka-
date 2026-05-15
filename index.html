@@ -53,12 +53,11 @@
     }
 
     .page {
-      width: min(900px, 100%);
+      width: min(1240px, 100%);
     }
 
     header {
       margin-bottom: 24px;
-      text-align: center;
     }
 
     h1 {
@@ -69,83 +68,33 @@
     }
 
     .subtitle {
-      max-width: 720px;
+      max-width: 760px;
       margin: 0;
-      margin-inline: auto;
       color: #d8c08d;
       font-size: clamp(1rem, 2vw, 1.22rem);
       line-height: 1.5;
     }
 
-    .menu-board {
-      position: relative;
-      padding: clamp(22px, 4vw, 34px);
-      border: 1px solid rgba(217, 173, 98, 0.55);
-      background:
-        linear-gradient(180deg, rgba(255, 246, 222, 0.97), rgba(245, 229, 191, 0.95));
-      color: var(--ink);
-      box-shadow: var(--shadow);
-      animation: riseIn 420ms ease both;
-    }
-
-    .menu-board::before,
-    .menu-board::after {
-      content: "";
-      position: absolute;
-      inset: 12px;
-      pointer-events: none;
-      border: 1px solid rgba(110, 75, 44, 0.28);
-    }
-
-    .menu-board::after {
-      inset: 18px;
-      border-style: dotted;
-      opacity: 0.58;
-    }
-
-    .menu-mark {
-      position: relative;
-      z-index: 1;
-      width: fit-content;
-      margin: 0 auto 18px;
-      padding: 5px 18px;
-      border-top: 1px solid rgba(110, 75, 44, 0.42);
-      border-bottom: 1px solid rgba(110, 75, 44, 0.42);
-      color: #5d4329;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0;
-      font-size: 0.86rem;
-    }
-
     .choices {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 12px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
     }
 
     .choice {
-      min-width: min(100%, 250px);
-      min-height: 54px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0 20px;
-      border: 1px solid rgba(62, 38, 20, 0.7);
+      min-height: 300px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 24px;
+      border: 1px solid rgba(217, 173, 98, 0.55);
+      border-top: 7px solid var(--accent);
       background:
-        linear-gradient(180deg, rgba(102, 65, 35, 0.96), rgba(45, 31, 20, 0.98));
+        linear-gradient(180deg, rgba(255, 246, 222, 0.97), rgba(245, 229, 191, 0.95));
+      color: var(--ink);
       text-decoration: none;
-      color: #f7dfad;
-      font-size: clamp(1.05rem, 2vw, 1.28rem);
-      font-weight: 900;
-      text-align: center;
-      box-shadow:
-        inset 0 1px 0 rgba(255, 246, 222, 0.24),
-        0 10px 22px rgba(0, 0, 0, 0.26);
-      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+      box-shadow: var(--shadow);
+      transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
       animation: riseIn 420ms ease both;
     }
 
@@ -153,19 +102,61 @@
     .choice:nth-child(3) { animation-delay: 160ms; }
     .choice:nth-child(4) { animation-delay: 240ms; }
     .choice:nth-child(5) { animation-delay: 320ms; }
+    .choice:nth-child(6) { animation-delay: 400ms; }
 
     .choice:hover {
-      transform: translateY(-2px);
+      transform: translateY(-4px);
       border-color: var(--gold);
-      background:
-        linear-gradient(180deg, rgba(132, 87, 47, 0.98), rgba(57, 38, 23, 0.99));
+      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.52);
     }
 
-    footer {
-      margin-top: 18px;
-      color: #bda371;
-      font-size: 0.95rem;
+    .choice h2 {
+      margin: 0;
+      font-size: clamp(1.85rem, 3.7vw, 3rem);
+      line-height: 1;
     }
+
+    .choice p {
+      margin: 14px 0 0;
+      max-width: 430px;
+      color: #5d4329;
+      font-size: 1.05rem;
+      line-height: 1.5;
+    }
+
+    .badge {
+      width: fit-content;
+      min-height: 34px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 12px;
+      border-radius: 999px;
+      font-weight: 700;
+      border: 1px solid rgba(110, 75, 44, 0.35);
+      background: rgba(255, 248, 231, 0.76);
+      color: #3a2818;
+    }
+
+    .arrow {
+      align-self: flex-end;
+      width: 52px;
+      height: 52px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      border: 1px solid rgba(110, 75, 44, 0.35);
+      background: #2d1f14;
+      color: #f7dfad;
+      font-size: 1.8rem;
+      line-height: 1;
+    }
+
+    .manual { --accent: var(--blue); }
+    .generator { --accent: var(--red); }
+    .help { --accent: var(--gold); }
+    .buyout { --accent: var(--green); }
+    .chamber { --accent: var(--brown); }
+    .rules { --accent: #7d6541; }
 
     .updates-modal {
       position: fixed;
@@ -249,8 +240,18 @@
         display: block;
       }
 
+      .choices {
+        grid-template-columns: 1fr;
+      }
+
       .choice {
-        width: 100%;
+        min-height: 240px;
+      }
+    }
+
+    @media (max-width: 1120px) and (min-width: 761px) {
+      .choices {
+        grid-template-columns: 1fr 1fr;
       }
     }
 
@@ -272,32 +273,62 @@
       <p class="subtitle">Hlavní rozcestník pro službu ve stylu úřední vývěsky roku 1899.</p>
     </header>
 
-    <main class="menu-board" aria-label="Rozcestník">
-      <div class="menu-mark">WestHaven Medical Office</div>
-      <nav class="choices">
+    <main class="choices" aria-label="Rozcestník">
       <a class="choice manual" href="westhaven-lekar-prirucka.html">
-        Příručky a Ordinace
+        <div>
+          <span class="badge">Příručky a Ordinace</span>
+          <h2>Naše příručky</h2>
+          <p>Studijní web z materiálů, vyhledávání, barevné zvýraznění a diagnostika podle zakliknutých příznaků.</p>
+        </div>
+        <span class="arrow" aria-hidden="true">›</span>
       </a>
 
       <a class="choice generator" href="generator_lekarske_zpravy_redm.html">
-        Generátor zprávy
+        <div>
+          <span class="badge">Dokumentace</span>
+          <h2>Náš generátor</h2>
+          <p>Rychlé vytvoření lékařské zprávy pro RedM službu.</p>
+        </div>
+        <span class="arrow" aria-hidden="true">›</span>
       </a>
 
       <a class="choice help" href="jak-na-to.html">
-        Jak na to
+        <div>
+          <span class="badge">Návod</span>
+          <h2>Jak na to</h2>
+          <p>Krátké vysvětlení, kde co najít, jak používat vyhledávání, Ordinaci a generátor zpráv.</p>
+        </div>
+        <span class="arrow" aria-hidden="true">›</span>
       </a>
 
       <a class="choice buyout" href="vykup.html">
-        Výkup surovin
+        <div>
+          <span class="badge">Výkup</span>
+          <h2>Výkup surovin</h2>
+          <p>Přehledný ceník státních doktorů pro byliny, suroviny a domluvené farmářské položky.</p>
+        </div>
+        <span class="arrow" aria-hidden="true">›</span>
       </a>
 
       <a class="choice chamber" href="lekarska-komora.html">
-        Lékařská komora
+        <div>
+          <span class="badge">Komora</span>
+          <h2>Lékařská komora</h2>
+          <p>Hierarchie vedení, oblastní primáři, sídla doktorů a rozdělení okrsků podle mapy.</p>
+        </div>
+        <span class="arrow" aria-hidden="true">›</span>
       </a>
-      </nav>
+
+      <a class="choice rules" href="lekarska-narizeni.html">
+        <div>
+          <span class="badge">Nařízení</span>
+          <h2>Lékařská nařízení</h2>
+          <p>Vyhlášky hlavního státního lékaře, desatero Komory a závazná pravidla služby.</p>
+        </div>
+        <span class="arrow" aria-hidden="true">›</span>
+      </a>
     </main>
 
-    <footer>Soubor: index.html</footer>
   </div>
 
   <div class="updates-modal" id="updatesModal" role="dialog" aria-modal="true" aria-labelledby="updatesTitle" hidden>
@@ -310,6 +341,14 @@
           <li>Hlavní menu převedené na dobová tlačítka ve stylu roku 1899.</li>
           <li>Přidané nové tlačítko a stránka Lékařská komora s hierarchií vedení.</li>
           <li>Výkup a Lékařská komora doplněné do návodu Jak na to.</li>
+          <li>Do Lékařské komory přidané rozklikávací rozdělení státních doktorů podle okrsků a měst.</li>
+          <li>Okrsky v Lékařské komoře barevně rozdělené podle mapy pro lepší přehlednost.</li>
+          <li>Ke státním doktorům doplněná sídla: Blackwater, Valentine a Rhodes.</li>
+          <li>Hlavní menu zklidněné do střídmé úřední vývěsky a odstraněný text Soubor: index.html.</li>
+          <li>Do hlavního menu přidaný vstup Lékařská nařízení.</li>
+          <li>Do Lékařských nařízení vložené vyhlášky č. 001, č. 002 a Lekárske desatoro.</li>
+          <li>Hlavní menu vrácené do přehledných karet a novinky doplněné do stránky Jak na to.</li>
+          <li>Lékařská nařízení dostala jemné barevné členění pro lepší čitelnost.</li>
           <li>Update okno je nově přehlednější a obsahuje historii posledních změn.</li>
           <li>Texty upravených stránek jsou sjednocené v UTF-8.</li>
         </ul>
@@ -328,7 +367,7 @@
   <script>
     const updatesModal = document.getElementById("updatesModal");
     const updatesClose = document.getElementById("updatesClose");
-    const updatesKey = "westhaven-updates-2026-05-15-menu-komora";
+    const updatesKey = "westhaven-updates-2026-05-15-karty-novinky-narizeni";
 
     function closeUpdatesModal() {
       updatesModal.hidden = true;

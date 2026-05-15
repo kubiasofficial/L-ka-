@@ -12,6 +12,9 @@
       --gold: #d9ad62;
       --brown: #6e4b2c;
       --red: #9f3633;
+      --hanover: #315f88;
+      --lemoyne: #39795b;
+      --west: #a45b22;
       --shadow: 0 22px 60px rgba(0, 0, 0, 0.42);
     }
 
@@ -178,7 +181,9 @@
       justify-content: center;
       padding: 18px;
       border: 1px solid rgba(110, 75, 44, 0.32);
-      background: rgba(255, 248, 231, 0.5);
+      border-top: 7px solid var(--district-color);
+      background:
+        linear-gradient(180deg, rgba(255, 248, 231, 0.72), rgba(245, 229, 191, 0.58));
       text-align: center;
     }
 
@@ -186,9 +191,141 @@
       font-size: clamp(1.45rem, 3vw, 2.05rem);
     }
 
+    .districts {
+      display: grid;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .doctor-district {
+      border: 1px solid rgba(110, 75, 44, 0.34);
+      border-left: 9px solid var(--district-color);
+      background:
+        linear-gradient(90deg, color-mix(in srgb, var(--district-color) 16%, transparent), transparent 42%),
+        rgba(255, 248, 231, 0.66);
+    }
+
+    .doctor-district summary {
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 18px;
+      cursor: pointer;
+      font-weight: 900;
+      list-style: none;
+      background: rgba(255, 248, 231, 0.56);
+    }
+
+    .doctor-district summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .doctor-district summary::after {
+      content: "+";
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border: 1px solid rgba(45, 31, 20, 0.55);
+      background: var(--district-color);
+      color: #f7dfad;
+      font-size: 1.4rem;
+      line-height: 1;
+    }
+
+    .doctor-district[open] summary::after {
+      content: "-";
+    }
+
+    .district-title {
+      display: grid;
+      gap: 3px;
+    }
+
+    .doctor-name {
+      font-size: clamp(1.25rem, 3vw, 1.8rem);
+      line-height: 1.05;
+    }
+
+    .doctor-region {
+      width: fit-content;
+      min-height: 26px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 9px;
+      border: 1px solid color-mix(in srgb, var(--district-color) 58%, #2d1f14);
+      background: color-mix(in srgb, var(--district-color) 16%, #fff8e7);
+      color: color-mix(in srgb, var(--district-color) 76%, #2d1f14);
+      font-size: 0.95rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .doctor-seat {
+      width: fit-content;
+      min-height: 26px;
+      display: inline-flex;
+      align-items: center;
+      margin-top: 2px;
+      padding: 0 9px;
+      border: 1px solid rgba(110, 75, 44, 0.28);
+      background: rgba(255, 248, 231, 0.72);
+      color: #3a2818;
+      font-size: 0.95rem;
+      font-weight: 900;
+    }
+
+    .district-body {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      padding: 0 18px 18px;
+      color: #3a2818;
+    }
+
+    .district-group {
+      padding: 14px 14px 12px;
+      border-top: 4px solid var(--district-color);
+      background: rgba(255, 252, 241, 0.64);
+      box-shadow: inset 0 0 0 1px rgba(110, 75, 44, 0.14);
+    }
+
+    .district-group h3 {
+      margin: 0 0 8px;
+      color: color-mix(in srgb, var(--district-color) 72%, #2d1f14);
+      font-size: 1rem;
+      text-transform: uppercase;
+    }
+
+    .district-group ul {
+      margin: 0;
+      padding-left: 20px;
+      line-height: 1.55;
+      font-weight: 700;
+    }
+
+    .district-group li::marker {
+      color: var(--district-color);
+    }
+
+    .district-wide {
+      grid-column: 1 / -1;
+    }
+
     @media (max-width: 760px) {
       .primaries {
         grid-template-columns: 1fr;
+      }
+
+      .district-body {
+        grid-template-columns: 1fr;
+      }
+
+      .district-wide {
+        grid-column: auto;
       }
 
       .charter {
@@ -236,20 +373,133 @@
 
         <section aria-label="Oblastní primáři">
           <div class="primaries">
-            <article class="primary">
+            <article class="primary" style="--district-color: var(--hanover)">
               <p class="rank">Oblastní primář</p>
               <p class="name">Ridka Black McRight</p>
             </article>
 
-            <article class="primary">
+            <article class="primary" style="--district-color: var(--west)">
               <p class="rank">Oblastní primář</p>
               <p class="name">Aleksandra Smirnovskaja</p>
             </article>
 
-            <article class="primary">
+            <article class="primary" style="--district-color: var(--lemoyne)">
               <p class="rank">Oblastní primář</p>
               <p class="name">Piotr Kaczinski</p>
             </article>
+          </div>
+        </section>
+
+        <div class="divider" aria-hidden="true"></div>
+
+        <section aria-label="Rozdělení státních doktorů podle okrsků">
+          <div class="seal" aria-hidden="true">Rozdělení státních doktorů</div>
+
+          <div class="districts">
+            <details class="doctor-district" style="--district-color: var(--hanover)">
+              <summary>
+                <span class="district-title">
+                  <span class="doctor-name">Ridka Black McRight</span>
+                  <span class="doctor-region">New Hanover</span>
+                  <span class="doctor-seat">Sídlo: Valentine</span>
+                </span>
+              </summary>
+              <div class="district-body">
+                <div class="district-group">
+                  <h3>Města a oblasti pod správou</h3>
+                  <ul>
+                    <li>Valentine</li>
+                    <li>Annesburg</li>
+                    <li>Van Horn Trading Post</li>
+                    <li>Emerald Ranch</li>
+                    <li>Butcher Creek</li>
+                  </ul>
+                </div>
+                <div class="district-group">
+                  <h3>Oblasti</h3>
+                  <ul>
+                    <li>The Heartlands</li>
+                    <li>Roanoke Ridge</li>
+                    <li>Cumberland Forest</li>
+                  </ul>
+                </div>
+              </div>
+            </details>
+
+            <details class="doctor-district" style="--district-color: var(--lemoyne)">
+              <summary>
+                <span class="district-title">
+                  <span class="doctor-name">Piotr Kaczinski</span>
+                  <span class="doctor-region">Lemoyne</span>
+                  <span class="doctor-seat">Sídlo: Rhodes</span>
+                </span>
+              </summary>
+              <div class="district-body">
+                <div class="district-group">
+                  <h3>Města a oblasti pod správou</h3>
+                  <ul>
+                    <li>Saint Denis</li>
+                    <li>Rhodes</li>
+                    <li>Lagras</li>
+                    <li>Caliga Hall</li>
+                    <li>Braithwaite Manor</li>
+                  </ul>
+                </div>
+                <div class="district-group">
+                  <h3>Oblasti</h3>
+                  <ul>
+                    <li>Scarlett Meadows</li>
+                    <li>Bayou Nwa</li>
+                    <li>Bluewater Marsh</li>
+                  </ul>
+                </div>
+              </div>
+            </details>
+
+            <details class="doctor-district" style="--district-color: var(--west)">
+              <summary>
+                <span class="district-title">
+                  <span class="doctor-name">Aleksandra Smirnovskaja</span>
+                  <span class="doctor-region">West Elizabeth &amp; New Austin</span>
+                  <span class="doctor-seat">Sídlo: Blackwater</span>
+                </span>
+              </summary>
+              <div class="district-body">
+                <div class="district-group">
+                  <h3>West Elizabeth - města a oblasti</h3>
+                  <ul>
+                    <li>Blackwater</li>
+                    <li>Strawberry</li>
+                    <li>Beecher's Hope</li>
+                    <li>Pronghorn Ranch</li>
+                  </ul>
+                </div>
+                <div class="district-group">
+                  <h3>West Elizabeth - oblasti</h3>
+                  <ul>
+                    <li>Great Plains</li>
+                    <li>Tall Trees</li>
+                    <li>Big Valley</li>
+                  </ul>
+                </div>
+                <div class="district-group">
+                  <h3>New Austin - města a oblasti</h3>
+                  <ul>
+                    <li>Armadillo</li>
+                    <li>Tumbleweed</li>
+                    <li>MacFarlane's Ranch</li>
+                    <li>Thieves Landing</li>
+                    <li>Rathskeller Fork</li>
+                  </ul>
+                </div>
+                <div class="district-group">
+                  <h3>New Austin - oblasti</h3>
+                  <ul>
+                    <li>New Austin celý stát</li>
+                  </ul>
+                </div>
+              </div>
+            </details>
           </div>
         </section>
       </div>

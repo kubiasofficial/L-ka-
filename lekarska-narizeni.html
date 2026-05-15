@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WestHaven Lékař | Lékařská nařízení</title>
+  <style>
+    :root {
+      --ink: #22170f;
+      --paper: #f2dfb6;
+      --paper-light: #fff5dc;
+      --gold: #d9ad62;
+      --brown: #6e4b2c;
+      --shadow: 0 22px 60px rgba(0, 0, 0, 0.42);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--paper-light);
+      background:
+        radial-gradient(circle at 16% 12%, rgba(217, 173, 98, 0.18), transparent 30rem),
+        linear-gradient(135deg, #130e0a 0%, #2a1d13 55%, #130e0a 100%);
+      animation: pageFade 520ms ease both;
+    }
+
+    @keyframes pageFade {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes riseIn {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .shell {
+      width: min(980px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 56px;
+    }
+
+    header {
+      padding: 18px 0 22px;
+      text-align: center;
+    }
+
+    .back {
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      padding: 0 12px;
+      border: 1px solid rgba(217, 173, 98, 0.5);
+      background: rgba(51, 36, 22, 0.88);
+      color: #f7dfad;
+      text-decoration: none;
+      font-weight: 700;
+      transition: transform 150ms ease, background 150ms ease, color 150ms ease;
+    }
+
+    .back:hover {
+      transform: translateY(-1px);
+      background: var(--gold);
+      color: #21160d;
+    }
+
+    h1 {
+      margin: 24px 0 10px;
+      font-size: clamp(2.4rem, 7vw, 5.2rem);
+      line-height: 0.92;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 720px;
+      margin: 0 auto;
+      color: #d8c08d;
+      font-size: 1.15rem;
+      line-height: 1.55;
+    }
+
+    .notice {
+      position: relative;
+      margin-top: 24px;
+      padding: clamp(26px, 5vw, 46px);
+      border: 1px solid rgba(86, 55, 30, 0.65);
+      border-top: 8px solid var(--gold);
+      background:
+        linear-gradient(180deg, rgba(255, 246, 222, 0.98), rgba(242, 223, 182, 0.96));
+      color: var(--ink);
+      box-shadow: var(--shadow);
+      animation: riseIn 420ms ease both;
+    }
+
+    .notice::before,
+    .notice::after {
+      content: "";
+      position: absolute;
+      inset: 14px;
+      pointer-events: none;
+      border: 2px solid rgba(68, 43, 22, 0.3);
+    }
+
+    .notice::after {
+      inset: 22px;
+      border-width: 1px;
+      border-style: dotted;
+      opacity: 0.7;
+    }
+
+    .notice-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .seal {
+      width: fit-content;
+      margin: 0 auto 18px;
+      padding: 7px 22px;
+      border-top: 1px solid rgba(110, 75, 44, 0.42);
+      border-bottom: 1px solid rgba(110, 75, 44, 0.42);
+      color: #5d4329;
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .decree {
+      position: relative;
+      z-index: 1;
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 18px;
+      border: 1px solid rgba(110, 75, 44, 0.16);
+      background: rgba(255, 252, 241, 0.28);
+      color: #2d1f14;
+    }
+
+    .decree + .decree {
+      margin-top: 34px;
+      border-top: 4px solid rgba(110, 75, 44, 0.22);
+    }
+
+    .decree:nth-of-type(1) {
+      background: linear-gradient(180deg, rgba(244, 232, 204, 0.55), rgba(255, 252, 241, 0.28));
+    }
+
+    .decree:nth-of-type(2) {
+      background: linear-gradient(180deg, rgba(231, 238, 220, 0.42), rgba(255, 252, 241, 0.28));
+    }
+
+    .decree:nth-of-type(3) {
+      background: linear-gradient(180deg, rgba(237, 225, 213, 0.5), rgba(255, 252, 241, 0.28));
+    }
+
+    .signature {
+      margin: 0 0 8px;
+      color: #5d4329;
+      font-size: 1.1rem;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .decree h2 {
+      margin: 0;
+      text-align: center;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      line-height: 1.05;
+      text-transform: uppercase;
+    }
+
+    .subject {
+      margin: 10px auto 22px;
+      padding: 8px 12px;
+      max-width: 760px;
+      border-top: 1px solid rgba(110, 75, 44, 0.18);
+      border-bottom: 1px solid rgba(110, 75, 44, 0.18);
+      color: #6e4b2c;
+      font-weight: 900;
+      line-height: 1.45;
+      text-align: center;
+    }
+
+    .decree p {
+      margin: 0 0 14px;
+      line-height: 1.62;
+      font-size: 1.05rem;
+    }
+
+    .principles {
+      display: grid;
+      gap: 12px;
+      margin: 18px 0;
+    }
+
+    .principle {
+      padding: 14px 16px;
+      border-left: 5px solid rgba(110, 75, 44, 0.58);
+      background: rgba(255, 248, 231, 0.62);
+    }
+
+    .principle h3,
+    .article h3 {
+      margin: 0 0 8px;
+      color: #4d351f;
+      font-size: 1.15rem;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+
+    .rule-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .article {
+      padding: 16px;
+      border: 1px solid rgba(110, 75, 44, 0.24);
+      background: rgba(255, 248, 231, 0.54);
+    }
+
+    .article:nth-child(odd) {
+      background: rgba(248, 241, 222, 0.66);
+    }
+
+    .article:nth-child(even) {
+      background: rgba(244, 236, 215, 0.5);
+    }
+
+    .article ul {
+      margin: 0;
+      padding-left: 22px;
+      line-height: 1.58;
+      font-size: 1.03rem;
+    }
+
+    .article li + li {
+      margin-top: 5px;
+    }
+
+    .divider {
+      width: min(420px, 80%);
+      height: 1px;
+      margin: 24px auto;
+      background: linear-gradient(90deg, transparent, rgba(110, 75, 44, 0.52), transparent);
+    }
+
+    .closing {
+      margin-top: 20px;
+      text-align: center;
+      font-weight: 900;
+    }
+
+    @media (max-width: 760px) {
+      .notice {
+        padding: 24px 18px;
+      }
+
+      .notice::before {
+        inset: 10px;
+      }
+
+      .notice::after {
+        display: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 1ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <a class="back" href="index.html">Zpět na hlavní menu</a>
+      <h1>Lékařská nařízení</h1>
+      <p class="subtitle">Úřední prostor pro závazná nařízení státní lékařské služby.</p>
+    </header>
+
+    <main class="notice" aria-labelledby="ordersTitle">
+      <div class="notice-inner">
+        <div class="seal" aria-hidden="true">Nařízení</div>
+
+        <section class="decree" aria-labelledby="decree001Title">
+          <p class="signature">Dr. Alistair Leach</p>
+          <h2 id="decree001Title">Vyhláška hlavného štátneho lekára č. 001</h2>
+          <p class="subject">Vec: Obnovenie činnosti Lekárskej Komory</p>
+
+          <p>Páni doktori, felčiari a učni.</p>
+          <p>Starý svet skončil. Tí, ktorí utiekli pred morom, sa vracajú späť do miest, ktoré sme my museli čistiť ohňom a vápnom. Myslia si, že sa vrátia do starých koľají. Mýlia sa.</p>
+          <p>Od dnešného dňa preberám plnú kontrolu nad zdravotnou starostlivosťou v tomto štáte. Nemocnica Saint Denis už nie je útulok pre bezdomovcov. Je to chrám vedy.</p>
+          <p>Vyžadujem od vás tri veci:</p>
+
+          <div class="principles">
+            <section class="principle">
+              <h3>Disciplínu</h3>
+              <p>Ruky sa umývajú v liehu pred aj po dotyku pacienta.</p>
+            </section>
+            <section class="principle">
+              <h3>Chladnokrvnosť</h3>
+              <p>Súcit rany nezašíva. Vašou úlohou je opraviť telo, nie fúkať rany.</p>
+            </section>
+            <section class="principle">
+              <h3>Lojalitu</h3>
+              <p>Recepty, ktoré sa tu naučíte, sú majetkom Komory. Kto vynesie tajomstvo von, skončí na mojom pitevnom stole.</p>
+            </section>
+          </div>
+
+          <div class="divider" aria-hidden="true"></div>
+          <p class="closing">Vitajte v službe. Nechajte city pred dverami.<br />S úctou, Dr. Alistair Leach</p>
+        </section>
+
+        <section class="decree" aria-labelledby="decalogueTitle">
+          <h2 id="decalogueTitle">Lekárske desatoro</h2>
+          <p class="subject">Nariadenie Komory</p>
+
+          <div class="rule-list">
+            <section class="article">
+              <h3>I. Cti život nad všetko ostatné</h3>
+              <p>Zdravie a život pacienta sú nadradené politike, peniazom aj osobným sporom. Lekár nechodí okolo horúcej kaše, lekár koná.</p>
+            </section>
+            <section class="article">
+              <h3>II. Disciplína a oddanosť</h3>
+              <p>Medicína nie je hobby, je to služba. Lekár musí byť k dispozícii, keď ho mesto potrebuje, a vykonávať svoju prácu s chladnou hlavou.</p>
+            </section>
+            <section class="article">
+              <h3>III. Hrobové ticho</h3>
+              <p>To, čo vidíte a počujete v ordinácii, ostáva v ordinácii. Vynášanie informácií o pacientoch sa trestá rovnako prísne ako zanedbanie starostlivosti.</p>
+            </section>
+            <section class="article">
+              <h3>IV. Nestrannosť</h3>
+              <p>Ošetrite žobráka rovnako ako starostu. Guľka v tele zabíja oboch rovnako. Vašou úlohou nie je súdiť, ale liečiť a vystaviť faktúru.</p>
+            </section>
+            <section class="article">
+              <h3>V. Zákaz vynášania zásob</h3>
+              <p>Všetok zdravotnícky materiál a liečivá sú majetkom nemocnice. Je prísne zakázané držať väčšie množstvo liekov, morfia alebo liehu mimo priestorov ambulancie na súkromné účely.</p>
+              <p>Porušenie tohto bodu sa považuje za krádež a trestá sa okamžitým vyhadzovom, odobratím licencie a nahlásením šerifovi.</p>
+            </section>
+            <section class="article">
+              <h3>VI. Vzdelávanie a pokrok</h3>
+              <p>Medicína sa mení. Lekár, ktorý sa prestane učiť, sa stáva vrahom. Študujte nové postupy a rešpektujte vedu.</p>
+            </section>
+            <section class="article">
+              <h3>VII. Rešpekt a hierarchia</h3>
+              <p>Medzi lekármi vládne kolegialita, ale aj poriadok. Slovo Primára a Hlavného štátneho lekára je konečné. Spory sa riešia za zatvorenými dverami, nie pred pacientom.</p>
+            </section>
+            <section class="article">
+              <h3>VIII. Stabilita a výkon</h3>
+              <p>Tiaha nášho povolania je nesmierna. Spôsob, akým si lekár udržiava pevnú ruku a chladnú myseľ tvárou v tvár smrti, je jeho súkromná záležitosť. Komora neskúma vaše individuálne metódy na upokojenie nervov, pokiaľ neohrozujú bezpečnosť pacienta. Rozhoduje výsledok, nie prostriedky. Zlyhanie sa však neospravedlňuje.</p>
+            </section>
+            <section class="article">
+              <h3>IX. Ochrana a bezpečnosť</h3>
+              <p>Chráňte seba aj pacienta. Ak je situácia nebezpečná, volajte šerifa. Mŕtvy doktor už nikomu nepomôže.</p>
+            </section>
+            <section class="article">
+              <h3>X. Reprezentácia stavu</h3>
+              <p>Lekár je elitou spoločnosti. Dbajte na svoj vzhľad, hygienu a vystupovanie. Nerobte hanbu svojmu titulu.</p>
+            </section>
+          </div>
+          <p class="closing">S úctou, Dr. Alistair Leach</p>
+        </section>
+
+        <section class="decree" aria-labelledby="decree002Title">
+          <p class="signature">Dr. Alistair Leach</p>
+          <h2 id="decree002Title">Vyhláška hlavného štátneho lekára č. 002</h2>
+          <p class="subject">Vec: Záväzné pravidlá pre zamestnancov Komory týkajúce sa evidencie, odmeňovania a manipulácie so štátnym majetkom.</p>
+
+          <p>Každý pracovník Lekárskej komory je povinný riadiť sa nasledujúcimi bodmi. Neznalosť tejto smernice neospravedlňuje.</p>
+
+          <div class="rule-list">
+            <section class="article">
+              <h3>I. Evidencia zamestnanca</h3>
+              <p>Každý lekár a felčiar je povinný viesť si presný denník vo svojom pridelenom osobnom spise. Po ukončení každej služby je nutné zapísať:</p>
+              <ul>
+                <li>Dĺžku trvania služby od - do.</li>
+                <li>Presný počet ošetrených pacientov.</li>
+                <li>Počet predaných obväzov a vydaných liekov.</li>
+              </ul>
+              <p>Výkazy, ktoré nebudú riadne zapísané, nebudú preplatené na konci mesiaca.</p>
+            </section>
+
+            <section class="article">
+              <h3>II. Kartotéka pacientov a záznamy</h3>
+              <p>Medicína si vyžaduje pamäť. Zamestnanci sú povinní v každej regionálnej ambulancii Blackwater, Valentine, Rhodes a Saint Denis viesť Knihu pacientov.</p>
+              <ul>
+                <li>O každom ošetrenom pacientovi musí byť vytvorený záznam: meno, dátum a druh zranenia alebo choroby.</li>
+                <li>Záznamy slúžia na ochranu verejného zdravia a môžu byť na oficiálnu žiadosť poskytnuté Úradu šerifa pri vyšetrovaní kriminálnej činnosti.</li>
+                <li>Zamlčanie závažných strelných poranení pred zákonom je klasifikované ako napomáhanie zločinu.</li>
+              </ul>
+            </section>
+
+            <section class="article">
+              <h3>III. Správa financií a regionálne účty</h3>
+              <ul>
+                <li>Každá ambulancia disponuje vlastným spoločným regionálnym účtom. Všetci radoví lekári a felčiari majú právo na tento účet financie vkladať.</li>
+                <li>Právo na výber z tohto účtu má výhradne Oblastný Primár a Hlavný štátny lekár.</li>
+                <li>Ak v meste úraduje miestny lekár, jeho zisk patrí výlučne Komore. Oblastný Primár je povinný pravidelne vyberať hotovosť od tohto lekára a v plnej výške ju vložiť na spoločný regionálny účet.</li>
+                <li>Primár je povinný viesť presnú evidenciu každého výberu od miestneho lekára. Financie na regionálnom účte slúžia primárne na nákup surovín pre daný región a vyplácanie odmien.</li>
+              </ul>
+            </section>
+
+            <section class="article">
+              <h3>IV. Platové podmienky a odvody</h3>
+              <p>Príjem zamestnanca Komory pozostáva z troch zložiek:</p>
+              <ul>
+                <li><strong>Fixný plat:</strong> vyplácaný raz mesačne na základe odslúžených zmien. Z rozpočtu je preplácaných maximálne 20 zmien za mesiac.</li>
+                <li><strong>Pohyblivá zložka:</strong> z každého lekárskeho úkonu a predaného materiálu si ponecháva lekár 50 %. Zvyšných 50 % je povinný ihneď vložiť na spoločný regionálny účet svojej ambulancie.</li>
+                <li><strong>Prémie:</strong> udeľované na základe rozhodnutia príslušného Primára z regionálneho účtu za mimoriadne nasadenie, výjazdy do terénu alebo prínos pre vedu.</li>
+              </ul>
+            </section>
+
+            <section class="article">
+              <h3>V. Evidencia a nákup surovín</h3>
+              <ul>
+                <li>Lekárska komora nakupuje nevyhnutné suroviny na výrobu liekov a zdravotníckeho materiálu od certifikovaných dodávateľov, prípadne za dohodnuté veľkoobchodné ceny.</li>
+                <li>Všetky výdavky na nákup surovín musia byť dôsledne evidované. Oblastní Primári alebo poverené osoby zapisujú každý nákup do Knihy výdavkov.</li>
+                <li>Materiál slúži výlučne na potreby nemocníc.</li>
+              </ul>
+            </section>
+
+            <section class="article">
+              <h3>VI. Výroba a držanie liečiv</h3>
+              <ul>
+                <li>Výroba pokročilých liečiv, Laudanum, Morfium a iné špeciálne tinktúry, je výhradným právom Hlavného štátneho lekára, Oblastných primárov a atestovaných Lekárnikov.</li>
+                <li>Bežný personál nemá povolenie na laboratórnu výrobu pokročilých liečiv.</li>
+                <li>Je prísne zakázané prechovávať lieky a zdravotnícky materiál mimo priestorov ambulancií, v osobných vozoch, v koňoch, v domácnostiach alebo po vreckách mimo služby.</li>
+                <li>Materiál patrí do skladov.</li>
+              </ul>
+            </section>
+
+            <section class="article">
+              <h3>VII. Sprenevera a tresty</h3>
+              <p>Lekárska komora nie je charita. Ošetrenie pacienta zadarmo, udeľovanie neodôvodnených zliav alebo darovanie obväzu je priamou krádežou z kasy Komory.</p>
+              <ul>
+                <li>Akékoľvek zatajenie zisku, neodvedenie 50 % podielu, privlastnenie si tržby miestneho lekára, manko v materiáli alebo držanie liekov u seba sa trestá okamžitým vyhadzovom.</li>
+                <li>Nasleduje trvalé odobratie lekárskeho diplomu a odovzdanie prípadu Šerifovi.</li>
+              </ul>
+            </section>
+          </div>
+
+          <p class="closing">Táto smernica vstupuje do platnosti dňom zverejnenia.<br />S úctou, Dr. Alistair Leach</p>
+        </section>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
