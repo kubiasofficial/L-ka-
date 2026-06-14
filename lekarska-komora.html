@@ -191,6 +191,29 @@
       font-size: clamp(1.45rem, 3vw, 2.05rem);
     }
 
+    .support-roles {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .support-role {
+      min-height: 138px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 18px;
+      border: 1px solid rgba(110, 75, 44, 0.32);
+      border-top: 7px solid var(--role-color);
+      background:
+        linear-gradient(180deg, rgba(255, 248, 231, 0.72), rgba(245, 229, 191, 0.58));
+      text-align: center;
+    }
+
+    .support-role .name {
+      font-size: clamp(1.35rem, 3vw, 1.9rem);
+    }
+
     .districts {
       display: grid;
       gap: 12px;
@@ -320,6 +343,10 @@
         grid-template-columns: 1fr;
       }
 
+      .support-roles {
+        grid-template-columns: 1fr;
+      }
+
       .district-body {
         grid-template-columns: 1fr;
       }
@@ -357,7 +384,7 @@
     <header>
       <a class="back" href="index.html">Zpět na hlavní menu</a>
       <h1>Lékařská komora</h1>
-      <p class="subtitle">Přehled vedení státní lékařské služby a oblastních primářů.</p>
+      <p class="subtitle">Přehled vedení státní lékařské služby, oblastních primářů a odborných funkcí.</p>
     </header>
 
     <main class="charter" aria-labelledby="chamberTitle">
@@ -380,12 +407,28 @@
 
             <article class="primary" style="--district-color: var(--west)">
               <p class="rank">Oblastní primář</p>
-              <p class="name">Aleksandra Smirnovskaja</p>
+              <p class="name">Pearl Black</p>
             </article>
 
             <article class="primary" style="--district-color: var(--lemoyne)">
               <p class="rank">Oblastní primář</p>
-              <p class="name">Piotr Kaczinski</p>
+              <p class="name">Aleksandra Smirnovskaja</p>
+            </article>
+          </div>
+        </section>
+
+        <div class="divider" aria-hidden="true"></div>
+
+        <section aria-label="Další vedení a odborné funkce">
+          <div class="support-roles">
+            <article class="support-role" style="--role-color: var(--red)">
+              <p class="rank">Vrchní lékařský inspektor</p>
+              <p class="name">Daniel Harley</p>
+            </article>
+
+            <article class="support-role" style="--role-color: var(--green)">
+              <p class="rank">Státní lékárník</p>
+              <p class="name">Arthur Caldwell</p>
             </article>
           </div>
         </section>
@@ -429,7 +472,7 @@
             <details class="doctor-district" style="--district-color: var(--lemoyne)">
               <summary>
                 <span class="district-title">
-                  <span class="doctor-name">Piotr Kaczinski</span>
+                  <span class="doctor-name">Aleksandra Smirnovskaja</span>
                   <span class="doctor-region">Lemoyne</span>
                   <span class="doctor-seat">Sídlo: Rhodes</span>
                 </span>
@@ -459,7 +502,7 @@
             <details class="doctor-district" style="--district-color: var(--west)">
               <summary>
                 <span class="district-title">
-                  <span class="doctor-name">Aleksandra Smirnovskaja</span>
+                  <span class="doctor-name">Pearl Black</span>
                   <span class="doctor-region">West Elizabeth &amp; New Austin</span>
                   <span class="doctor-seat">Sídlo: Blackwater</span>
                 </span>
