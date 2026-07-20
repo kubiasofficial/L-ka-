@@ -336,6 +336,17 @@
       <button class="updates-close" id="updatesClose" type="button" aria-label="Zavřít dnešní opravy">&times;</button>
       <h2 id="updatesTitle">Aktualizace</h2>
       <div class="updates-block">
+        <p class="updates-date">20. 07. 2026</p>
+        <ul class="updates-list">
+          <li>Generátor lékařských zpráv nově obsahuje lokální evidenci aktuální směny.</li>
+          <li>Hotovou zprávu lze uložit pod jménem pacienta a později ji jedním kliknutím znovu otevřít ke zkopírování.</li>
+          <li>Přidané rozlišení základního ošetření za 10 $ a náročnějšího ošetření nebo šití za 15 $.</li>
+          <li>Evidence automaticky počítá celkovou tržbu, polovinu pro lékaře a polovinu k odevzdání lékařské komoře.</li>
+          <li>Přidané bezpečné uzavření směny, které po potvrzení vymaže uložené zprávy a vynuluje souhrn.</li>
+          <li>Stránka Jak na to byla rozšířena o podrobný postup práce s evidencí směny.</li>
+        </ul>
+      </div>
+      <div class="updates-block">
         <p class="updates-date">14. 06. 2026</p>
         <ul class="updates-list">
           <li>Do příručky doplněný cestovní základ a obsah lékařské brašny.</li>
@@ -376,7 +387,7 @@
   <script>
     const updatesModal = document.getElementById("updatesModal");
     const updatesClose = document.getElementById("updatesClose");
-    const updatesKey = "westhaven-updates-2026-06-14-brasna-komora";
+    const updatesKey = "westhaven-updates-2026-07-20-evidence-smeny";
 
     function closeUpdatesModal() {
       updatesModal.hidden = true;
