@@ -336,6 +336,17 @@
       <button class="updates-close" id="updatesClose" type="button" aria-label="Zavřít dnešní opravy">&times;</button>
       <h2 id="updatesTitle">Aktualizace</h2>
       <div class="updates-block">
+        <p class="updates-date">22. 07. 2026</p>
+        <ul class="updates-list">
+          <li>Do generátoru přidaný přepínač mezi lékařskou a pitevní zprávou.</li>
+          <li>Pitevní protokol obsahuje údaje případu, nálezu těla, ohledání, poranění, vnitřního nálezu, toxikologie, důkazů, příčiny smrti a závěru patologa.</li>
+          <li>Pitevní zprávy lze ukládat do evidence směny a znovu otevírat ke zkopírování.</li>
+          <li>Uložené pitvy jsou označené štítkem PITVA a počítají se odděleně od lékařských zpráv.</li>
+          <li>Pitva nemá cenu a nezapočítává se do tržby ani odvodu lékařské komoře.</li>
+          <li>Stránka Jak na to byla rozšířena o postup vytvoření a uložení pitevního protokolu.</li>
+        </ul>
+      </div>
+      <div class="updates-block">
         <p class="updates-date">20. 07. 2026</p>
         <ul class="updates-list">
           <li>Generátor lékařských zpráv nově obsahuje lokální evidenci aktuální směny.</li>
@@ -387,7 +398,7 @@
   <script>
     const updatesModal = document.getElementById("updatesModal");
     const updatesClose = document.getElementById("updatesClose");
-    const updatesKey = "westhaven-updates-2026-07-20-evidence-smeny";
+    const updatesKey = "westhaven-updates-2026-07-22-pitevni-zpravy";
 
     function closeUpdatesModal() {
       updatesModal.hidden = true;

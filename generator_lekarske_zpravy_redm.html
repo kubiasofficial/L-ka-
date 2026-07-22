@@ -79,6 +79,47 @@
       color: #3a2818;
     }
 
+    .document-switch {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 20px;
+      padding: 6px;
+      border: 2px solid #7a5632;
+      border-radius: 8px;
+      background: #d9c398;
+    }
+
+    .document-switch button {
+      background: #5a4938;
+    }
+
+    .document-switch button.is-active {
+      background: #7b2727;
+      box-shadow: inset 0 0 0 2px #f1d6a4;
+    }
+
+    .document-fields[hidden] {
+      display: none;
+    }
+
+    .form-intro {
+      margin: -4px 0 12px;
+      color: #604a34;
+      font-size: 14px;
+    }
+
+    .autopsy-badge {
+      display: inline-block;
+      margin-right: 7px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: #7b2727;
+      color: #fff5df;
+      font: bold 11px Arial, sans-serif;
+      letter-spacing: 0.5px;
+    }
+
     label {
       display: block;
       font-weight: bold;
@@ -263,6 +304,12 @@
 
     <div class="layout">
       <div class="panel">
+        <div class="document-switch" role="group" aria-label="Typ vytvářeného dokumentu">
+          <button id="medicalSwitch" class="is-active" type="button" onclick="switchDocument('medical')" aria-pressed="true">Lékařská zpráva</button>
+          <button id="autopsySwitch" type="button" onclick="switchDocument('autopsy')" aria-pressed="false">Pitevní zpráva</button>
+        </div>
+
+        <div id="medicalFields" class="document-fields">
         <h2>Údaje o pacientovi</h2>
 
         <div class="row">
@@ -324,6 +371,125 @@
 
         <label for="signature">Podpis / iniciály</label>
         <input id="signature" placeholder="např. A. S." />
+        </div>
+
+        <div id="autopsyFields" class="document-fields" hidden>
+          <h2>Údaje pitevního protokolu</h2>
+          <p class="form-intro">Pitva nemá cenu a nezapočítává se do tržby ani odvodu lékařské komoře.</p>
+
+          <label for="autopsyTitle">Název dokumentu</label>
+          <input id="autopsyTitle" placeholder="např. Pitevní protokol — John Doe" />
+
+          <div class="row">
+            <div>
+              <label for="protocolStatus">Stav protokolu</label>
+              <select id="protocolStatus">
+                <option>Rozpracovaný</option>
+                <option>Dokončený</option>
+                <option>Uzavřený</option>
+              </select>
+            </div>
+            <div>
+              <label for="protocolNumber">Číslo protokolu</label>
+              <input id="protocolNumber" placeholder="např. P-042" />
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label for="caseNumber">Případ / číslo případu</label>
+              <input id="caseNumber" placeholder="např. 1899-42" />
+            </div>
+            <div>
+              <label for="deceasedName">Zesnulý</label>
+              <input id="deceasedName" placeholder="např. John Doe" />
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label for="identifiedBy">Identifikaci provedl</label>
+              <input id="identifiedBy" placeholder="jméno a funkce" />
+            </div>
+            <div>
+              <label for="autopsyDoctor">Pitvu provedl</label>
+              <input id="autopsyDoctor" placeholder="jméno lékaře / patologa" />
+            </div>
+          </div>
+
+          <label for="autopsyAssistants">Přítomní asistenti</label>
+          <input id="autopsyAssistants" placeholder="jména přítomných asistentů" />
+
+          <div class="row">
+            <div>
+              <label for="foundAt">Datum / čas nálezu</label>
+              <input id="foundAt" placeholder="např. 22.07.1899, 05:40" />
+            </div>
+            <div>
+              <label for="autopsyAt">Datum / čas pitvy</label>
+              <input id="autopsyAt" placeholder="např. 22.07.1899, 08:15" />
+            </div>
+          </div>
+
+          <label for="bodyFoundLocation">Místo nálezu těla</label>
+          <input id="bodyFoundLocation" placeholder="přesné místo nálezu" />
+
+          <label for="autopsyLocation">Místo provedení pitvy</label>
+          <input id="autopsyLocation" placeholder="např. márnice Blackwater" />
+
+          <div class="row">
+            <div>
+              <label for="estimatedDeathTime">Odhad doby smrti</label>
+              <input id="estimatedDeathTime" placeholder="např. 6–8 hodin před nálezem" />
+            </div>
+            <div>
+              <label for="deathManner">Charakter smrti</label>
+              <select id="deathManner">
+                <option>Neurčená</option>
+                <option>Přirozená</option>
+                <option>Nehoda</option>
+                <option>Vražda</option>
+                <option>Podle dostupných nálezů sebevražda</option>
+              </select>
+            </div>
+          </div>
+
+          <label for="sceneSummary">Shrnutí místa nálezu</label>
+          <textarea id="sceneSummary" placeholder="poloha těla, okolí a podstatné okolnosti nálezu"></textarea>
+
+          <label for="externalExam">Zevní ohledání těla</label>
+          <textarea id="externalExam" placeholder="stav těla, posmrtné změny a zevní nález"></textarea>
+
+          <label for="clothingBelongings">Oblečení a osobní věci</label>
+          <textarea id="clothingBelongings" placeholder="oblečení, osobní předměty a jejich stav"></textarea>
+
+          <label for="injuryDescription">Popis zranění</label>
+          <textarea id="injuryDescription" placeholder="druh, rozsah a umístění zjištěných poranění"></textarea>
+
+          <label for="internalFindings">Vnitřní nález</label>
+          <textarea id="internalFindings" placeholder="nález po otevření tělních dutin a vyšetření orgánů"></textarea>
+
+          <label for="toxicologySamples">Toxikologie / odebrané vzorky</label>
+          <textarea id="toxicologySamples" placeholder="odebrané vzorky a požadovaná vyšetření"></textarea>
+
+          <label for="securedEvidence">Zajištěné důkazy</label>
+          <textarea id="securedEvidence" placeholder="zajištěné předměty, střely, vzorky nebo jiné stopy"></textarea>
+
+          <label for="immediateCause">Bezprostřední příčina smrti</label>
+          <textarea id="immediateCause" placeholder="bezprostřední příčina smrti"></textarea>
+
+          <label for="pathologistConclusion">Závěr patologa</label>
+          <textarea id="pathologistConclusion" placeholder="odborný závěr vycházející z provedené pitvy"></textarea>
+
+          <label for="furtherInvestigation">Doporučení pro další šetření</label>
+          <textarea id="furtherInvestigation" placeholder="doporučené kroky pro vyšetřovatele"></textarea>
+
+          <label for="photoReferences">Připojené fotografie / označení</label>
+          <input id="photoReferences" placeholder="např. 3 fotografie, označení F-01 až F-03" />
+
+          <label for="autopsySignature">Podpis / iniciály patologa</label>
+          <input id="autopsySignature" placeholder="např. A. S." />
+        </div>
 
         <div class="buttons">
           <button onclick="generateReport()">Vygenerovat zprávu</button>
@@ -332,11 +498,11 @@
           <button class="danger" onclick="clearForm()">Vymazat</button>
         </div>
 
-        <p class="note">Tip: Výstup si jen zkopíruješ a vložíš do kolonek ve hře.</p>
+        <p class="note">Tip: Výstup si zkopíruješ a vložíš do příslušných kolonek ve hře.</p>
       </div>
 
       <div class="panel">
-        <h2>Hotová lékařská zpráva</h2>
+        <h2 id="outputTitle">Hotová lékařská zpráva</h2>
         <div id="output" class="output-box">Zatím není vygenerováno.</div>
 
         <section class="shift-ledger" aria-labelledby="ledgerTitle">
@@ -344,7 +510,8 @@
           <p class="note">Spokojenou zprávu ulož. Kliknutím na jméno ji znovu otevřeš ke zkopírování. Evidence zůstane v tomto prohlížeči až do uzavření směny.</p>
           <div id="savedReports" class="saved-reports"></div>
           <div class="ledger-summary" aria-live="polite">
-            <div><span>Počet ošetření</span><strong id="treatmentCount">0</strong></div>
+            <div><span>Lékařské zprávy</span><strong id="treatmentCount">0</strong></div>
+            <div><span>Pitevní zprávy</span><strong id="autopsyCount">0</strong></div>
             <div><span>Celkem vybráno</span><strong id="totalEarned">0 $</strong></div>
             <div><span>Podíl lékaře</span><strong id="doctorShare">0 $</strong></div>
             <div><span>K odevzdání komoře</span><strong id="chamberShare">0 $</strong></div>
@@ -358,6 +525,7 @@
   <script>
     const REPORTS_STORAGE_KEY = "westhaven-medical-shift-reports-v1";
     const EMPTY_REPORT = "Zatím není vygenerováno.";
+    let activeDocumentType = "medical";
     let currentReport = "";
     let currentReportData = null;
     let savedReports = loadSavedReports();
@@ -383,10 +551,34 @@
       return `${Number.isInteger(amount) ? amount : amount.toFixed(2).replace(".", ",")} $`;
     }
 
+    function switchDocument(type) {
+      if (type === activeDocumentType) return;
+      if (currentReport && !confirm("Přepnutím se zahodí neuložený náhled zprávy. Pokračovat?")) return;
+
+      activeDocumentType = type;
+      const medical = type === "medical";
+      document.getElementById("medicalFields").hidden = !medical;
+      document.getElementById("autopsyFields").hidden = medical;
+      document.getElementById("medicalSwitch").classList.toggle("is-active", medical);
+      document.getElementById("autopsySwitch").classList.toggle("is-active", !medical);
+      document.getElementById("medicalSwitch").setAttribute("aria-pressed", medical);
+      document.getElementById("autopsySwitch").setAttribute("aria-pressed", !medical);
+      document.getElementById("outputTitle").textContent = medical ? "Hotová lékařská zpráva" : "Hotová pitevní zpráva";
+      document.getElementById("output").textContent = EMPTY_REPORT;
+      currentReport = "";
+      currentReportData = null;
+      document.getElementById("saveReportButton").disabled = true;
+    }
+
     function generateReport() {
+      if (activeDocumentType === "autopsy") {
+        generateAutopsyReport();
+        return;
+      }
+
       const recordNumber = value("recordNumber") || "---";
       const status = value("status") || "Stabilizován";
-      const patientName = value("patientName") || "---";
+      const patientName = value("patientName");
       const date = value("date") || "---";
       const time = value("time") || "---";
       const doctor = value("doctor") || "---";
@@ -405,7 +597,7 @@ STAV PŘI PROPUŠTĚNÍ:
 ${status}
 
 JMÉNO PACIENTA:
-${patientName}
+${patientName || "---"}
 
 OŠETŘUJÍCÍ LÉKAŘ:
 ${doctor}
@@ -437,8 +629,131 @@ Ošetřující lékař:
 ${signature}`;
 
       document.getElementById("output").textContent = report;
+      document.getElementById("outputTitle").textContent = "Hotová lékařská zpráva";
       currentReport = report;
-      currentReportData = { patientName, treatmentType };
+      currentReportData = {
+        documentType: "medical",
+        displayName: patientName,
+        treatmentType,
+        price: treatmentType === "advanced" ? 15 : 10
+      };
+      document.getElementById("saveReportButton").disabled = false;
+    }
+
+    function generateAutopsyReport() {
+      const title = value("autopsyTitle") || "Pitevní protokol";
+      const protocolStatus = value("protocolStatus") || "Rozpracovaný";
+      const protocolNumber = value("protocolNumber") || "---";
+      const caseNumber = value("caseNumber") || "---";
+      const deceasedName = value("deceasedName");
+      const identifiedBy = value("identifiedBy") || "---";
+      const autopsyDoctor = value("autopsyDoctor") || "---";
+      const autopsyAssistants = value("autopsyAssistants") || "---";
+      const foundAt = value("foundAt") || "---";
+      const autopsyAt = value("autopsyAt") || "---";
+      const bodyFoundLocation = value("bodyFoundLocation") || "---";
+      const autopsyLocation = value("autopsyLocation") || "---";
+      const estimatedDeathTime = value("estimatedDeathTime") || "---";
+      const deathManner = value("deathManner") || "Neurčená";
+      const sceneSummary = value("sceneSummary") || "---";
+      const externalExam = value("externalExam") || "---";
+      const clothingBelongings = value("clothingBelongings") || "---";
+      const injuryDescription = value("injuryDescription") || "---";
+      const internalFindings = value("internalFindings") || "---";
+      const toxicologySamples = value("toxicologySamples") || "---";
+      const securedEvidence = value("securedEvidence") || "---";
+      const immediateCause = value("immediateCause") || "---";
+      const pathologistConclusion = value("pathologistConclusion") || "---";
+      const furtherInvestigation = value("furtherInvestigation") || "---";
+      const photoReferences = value("photoReferences") || "Žádné uvedené fotografie";
+      const autopsySignature = value("autopsySignature") || autopsyDoctor;
+
+      const report = `${title.toUpperCase()}
+
+STAV PROTOKOLU:
+${protocolStatus}
+
+PŘÍPAD / ČÍSLO PŘÍPADU:
+${caseNumber}
+
+ČÍSLO PROTOKOLU:
+${protocolNumber}
+
+ZESNULÝ:
+${deceasedName || "---"}
+
+IDENTIFIKACI PROVEDL:
+${identifiedBy}
+
+PITVU PROVEDL:
+${autopsyDoctor}
+
+PŘÍTOMNÍ ASISTENTI:
+${autopsyAssistants}
+
+DATUM / ČAS NÁLEZU:
+${foundAt}
+
+DATUM / ČAS PITVY:
+${autopsyAt}
+
+MÍSTO NÁLEZU TĚLA:
+${bodyFoundLocation}
+
+MÍSTO PROVEDENÍ PITVY:
+${autopsyLocation}
+
+ODHAD DOBY SMRTI:
+${estimatedDeathTime}
+
+CHARAKTER SMRTI:
+${deathManner}
+
+SHRNUTÍ MÍSTA NÁLEZU:
+${sceneSummary}
+
+ZEVNÍ OHLEDÁNÍ TĚLA:
+${externalExam}
+
+OBLEČENÍ A OSOBNÍ VĚCI:
+${clothingBelongings}
+
+POPIS ZRANĚNÍ:
+${injuryDescription}
+
+VNITŘNÍ NÁLEZ:
+${internalFindings}
+
+TOXIKOLOGIE / ODEBRANÉ VZORKY:
+${toxicologySamples}
+
+ZAJIŠTĚNÉ DŮKAZY:
+${securedEvidence}
+
+BEZPROSTŘEDNÍ PŘÍČINA SMRTI:
+${immediateCause}
+
+ZÁVĚR PATOLOGA:
+${pathologistConclusion}
+
+DOPORUČENÍ PRO DALŠÍ ŠETŘENÍ:
+${furtherInvestigation}
+
+PŘIPOJENÉ FOTOGRAFIE / OZNAČENÍ:
+${photoReferences}
+
+PODPIS / INICIÁLY PATOLOGA:
+${autopsySignature}`;
+
+      document.getElementById("output").textContent = report;
+      document.getElementById("outputTitle").textContent = "Hotová pitevní zpráva";
+      currentReport = report;
+      currentReportData = {
+        documentType: "autopsy",
+        displayName: deceasedName,
+        caseNumber,
+        price: 0
+      };
       document.getElementById("saveReportButton").disabled = false;
     }
 
@@ -448,19 +763,20 @@ ${signature}`;
         return;
       }
 
-      const patientName = currentReportData?.patientName;
-      if (!patientName) {
-        alert("Před uložením doplň jméno pacienta a zprávu znovu vygeneruj.");
+      const displayName = currentReportData?.displayName;
+      if (!displayName) {
+        const missingLabel = currentReportData?.documentType === "autopsy" ? "jméno zesnulého" : "jméno pacienta";
+        alert(`Před uložením doplň ${missingLabel} a zprávu znovu vygeneruj.`);
         return;
       }
 
-      const treatmentType = currentReportData.treatmentType;
-      const price = treatmentType === "advanced" ? 15 : 10;
       savedReports.push({
         id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
-        patientName,
-        treatmentType,
-        price,
+        patientName: displayName,
+        documentType: currentReportData.documentType,
+        treatmentType: currentReportData.treatmentType || null,
+        caseNumber: currentReportData.caseNumber || null,
+        price: currentReportData.price,
         report: currentReport,
         savedAt: new Date().toISOString()
       });
@@ -476,6 +792,7 @@ ${signature}`;
       const saved = savedReports.find(report => report.id === id);
       if (!saved) return;
       document.getElementById("output").textContent = saved.report;
+      document.getElementById("outputTitle").textContent = saved.documentType === "autopsy" ? "Uložená pitevní zpráva" : "Uložená lékařská zpráva";
       currentReport = "";
       currentReportData = null;
       document.getElementById("saveReportButton").disabled = true;
@@ -484,7 +801,8 @@ ${signature}`;
 
     function deleteSavedReport(id) {
       const saved = savedReports.find(report => report.id === id);
-      if (!saved || !confirm(`Opravdu odstranit zprávu pacienta ${saved.patientName}?`)) return;
+      const personLabel = saved?.documentType === "autopsy" ? "zesnulého" : "pacienta";
+      if (!saved || !confirm(`Opravdu odstranit zprávu ${personLabel} ${saved.patientName}?`)) return;
       savedReports = savedReports.filter(report => report.id !== id);
       persistReports();
       renderLedger();
@@ -506,13 +824,20 @@ ${signature}`;
 
           const openButton = document.createElement("button");
           openButton.className = "saved-report-open";
-          openButton.textContent = `${index + 1}. ${saved.patientName} — ${money(saved.price)}`;
+          if (saved.documentType === "autopsy") {
+            const badge = document.createElement("span");
+            badge.className = "autopsy-badge";
+            badge.textContent = "PITVA";
+            openButton.append(badge, `${index + 1}. ${saved.patientName}${saved.caseNumber && saved.caseNumber !== "---" ? ` — případ ${saved.caseNumber}` : ""}`);
+          } else {
+            openButton.textContent = `${index + 1}. ${saved.patientName} — ${money(saved.price)}`;
+          }
           openButton.addEventListener("click", () => openSavedReport(saved.id));
 
           const deleteButton = document.createElement("button");
           deleteButton.className = "saved-report-delete";
           deleteButton.type = "button";
-          deleteButton.setAttribute("aria-label", `Odstranit zprávu pacienta ${saved.patientName}`);
+          deleteButton.setAttribute("aria-label", `Odstranit ${saved.documentType === "autopsy" ? "pitevní zprávu" : "lékařskou zprávu"}: ${saved.patientName}`);
           deleteButton.textContent = "Odstranit";
           deleteButton.addEventListener("click", () => deleteSavedReport(saved.id));
 
@@ -521,9 +846,12 @@ ${signature}`;
         });
       }
 
-      const total = savedReports.reduce((sum, report) => sum + Number(report.price || 0), 0);
+      const medicalReports = savedReports.filter(report => report.documentType !== "autopsy");
+      const autopsyReports = savedReports.filter(report => report.documentType === "autopsy");
+      const total = medicalReports.reduce((sum, report) => sum + Number(report.price || 0), 0);
       const half = total / 2;
-      document.getElementById("treatmentCount").textContent = savedReports.length;
+      document.getElementById("treatmentCount").textContent = medicalReports.length;
+      document.getElementById("autopsyCount").textContent = autopsyReports.length;
       document.getElementById("totalEarned").textContent = money(total);
       document.getElementById("doctorShare").textContent = money(half);
       document.getElementById("chamberShare").textContent = money(half);
@@ -535,15 +863,18 @@ ${signature}`;
         return;
       }
 
+      const medicalCount = savedReports.filter(report => report.documentType !== "autopsy").length;
+      const autopsyCount = savedReports.filter(report => report.documentType === "autopsy").length;
       const total = savedReports.reduce((sum, report) => sum + Number(report.price || 0), 0);
       const chamber = total / 2;
-      const confirmed = confirm(`Uzavřít směnu?\n\nPočet zpráv: ${savedReports.length}\nK odevzdání lékařské komoře: ${money(chamber)}\n\nUložené zprávy budou nenávratně vymazány.`);
+      const confirmed = confirm(`Uzavřít směnu?\n\nLékařské zprávy: ${medicalCount}\nPitevní zprávy: ${autopsyCount}\nK odevzdání lékařské komoře: ${money(chamber)}\n\nUložené zprávy budou nenávratně vymazány.`);
       if (!confirmed) return;
 
       savedReports = [];
       localStorage.removeItem(REPORTS_STORAGE_KEY);
       renderLedger();
       document.getElementById("output").textContent = EMPTY_REPORT;
+      document.getElementById("outputTitle").textContent = activeDocumentType === "medical" ? "Hotová lékařská zpráva" : "Hotová pitevní zpráva";
       currentReport = "";
       currentReportData = null;
       document.getElementById("saveReportButton").disabled = true;
@@ -566,11 +897,18 @@ ${signature}`;
     }
 
     function clearForm() {
-      const inputs = document.querySelectorAll("input, textarea");
+      const activeFields = document.getElementById(activeDocumentType === "medical" ? "medicalFields" : "autopsyFields");
+      const inputs = activeFields.querySelectorAll("input, textarea");
       inputs.forEach(input => input.value = "");
-      document.getElementById("status").value = "Stabilizován";
-      document.getElementById("treatmentType").value = "basic";
+      if (activeDocumentType === "medical") {
+        document.getElementById("status").value = "Stabilizován";
+        document.getElementById("treatmentType").value = "basic";
+      } else {
+        document.getElementById("protocolStatus").value = "Rozpracovaný";
+        document.getElementById("deathManner").value = "Neurčená";
+      }
       document.getElementById("output").textContent = EMPTY_REPORT;
+      document.getElementById("outputTitle").textContent = activeDocumentType === "medical" ? "Hotová lékařská zpráva" : "Hotová pitevní zpráva";
       currentReport = "";
       currentReportData = null;
       document.getElementById("saveReportButton").disabled = true;
