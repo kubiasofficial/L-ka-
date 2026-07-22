@@ -338,6 +338,9 @@
       <div class="updates-block">
         <p class="updates-date">22. 07. 2026</p>
         <ul class="updates-list">
+          <li>Do generátoru přidaná Automatická pitva, která lokálně roztřídí vložené poznámky do pitevního formuláře.</li>
+          <li>Automatické třídění rozpozná běžné kolonky, neznámé údaje i více případů oddělených řádkem pomlček.</li>
+          <li>Nerozpoznané informace se zachovají v poli Neuřazené původní poznámky, aby se při třídění nic neztratilo.</li>
           <li>Do generátoru přidaný přepínač mezi lékařskou a pitevní zprávou.</li>
           <li>Pitevní protokol obsahuje údaje případu, nálezu těla, ohledání, poranění, vnitřního nálezu, toxikologie, důkazů, příčiny smrti a závěru patologa.</li>
           <li>Pitevní zprávy lze ukládat do evidence směny a znovu otevírat ke zkopírování.</li>
@@ -398,7 +401,7 @@
   <script>
     const updatesModal = document.getElementById("updatesModal");
     const updatesClose = document.getElementById("updatesClose");
-    const updatesKey = "westhaven-updates-2026-07-22-pitevni-zpravy";
+    const updatesKey = "westhaven-updates-2026-07-22-automaticka-pitva";
 
     function closeUpdatesModal() {
       updatesModal.hidden = true;

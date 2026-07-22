@@ -81,7 +81,7 @@
 
     .document-switch {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(3, 1fr);
       gap: 8px;
       margin-bottom: 20px;
       padding: 6px;
@@ -107,6 +107,18 @@
       margin: -4px 0 12px;
       color: #604a34;
       font-size: 14px;
+    }
+
+    .automatic-fields textarea {
+      min-height: 360px;
+    }
+
+    .automatic-help {
+      padding: 10px 12px;
+      border-left: 4px solid #7b2727;
+      background: #fff3d5;
+      color: #58422e;
+      line-height: 1.45;
     }
 
     .autopsy-badge {
@@ -292,6 +304,10 @@
       .row {
         grid-template-columns: 1fr;
       }
+
+      .document-switch {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -307,6 +323,7 @@
         <div class="document-switch" role="group" aria-label="Typ vytvářeného dokumentu">
           <button id="medicalSwitch" class="is-active" type="button" onclick="switchDocument('medical')" aria-pressed="true">Lékařská zpráva</button>
           <button id="autopsySwitch" type="button" onclick="switchDocument('autopsy')" aria-pressed="false">Pitevní zpráva</button>
+          <button id="automaticSwitch" type="button" onclick="switchDocument('automatic')" aria-pressed="false">Automatická pitva</button>
         </div>
 
         <div id="medicalFields" class="document-fields">
@@ -395,6 +412,9 @@
             </div>
           </div>
 
+          <label for="bodyDescription">Popis a identifikační znaky těla</label>
+          <textarea id="bodyDescription" placeholder="pohlaví, přibližný věk, výška, jizvy, tetování a další zvláštní znamení"></textarea>
+
           <div class="row">
             <div>
               <label for="caseNumber">Případ / číslo případu</label>
@@ -449,6 +469,7 @@
                 <option>Přirozená</option>
                 <option>Nehoda</option>
                 <option>Vražda</option>
+                <option>Podezření na cizí zavinění</option>
                 <option>Podle dostupných nálezů sebevražda</option>
               </select>
             </div>
@@ -487,12 +508,30 @@
           <label for="photoReferences">Připojené fotografie / označení</label>
           <input id="photoReferences" placeholder="např. 3 fotografie, označení F-01 až F-03" />
 
+          <label for="unclassifiedNotes">Neuřazené původní poznámky</label>
+          <textarea id="unclassifiedNotes" placeholder="informace, které automatické třídění nedokázalo bezpečně zařadit"></textarea>
+
           <label for="autopsySignature">Podpis / iniciály patologa</label>
           <input id="autopsySignature" placeholder="např. A. S." />
         </div>
 
+        <div id="automaticFields" class="document-fields automatic-fields" hidden>
+          <h2>Automatické vytvoření pitvy</h2>
+          <p class="automatic-help"><strong>Vlož všechny poznámky z ohledání.</strong> Nejlépe funguje zápis „název údaje - hodnota“, ale nástroj se pokusí rozpoznat i volný text. Neznámé údaje označí jako nezjištěné. Výsledek vždy zkontroluj před uložením.</p>
+
+          <label for="automaticNotes">Poznámky z pitvy</label>
+          <textarea id="automaticNotes" placeholder="jméno - Neznámé&#10;pohlaví - muž&#10;přibližný věk - kolem 30 let&#10;stav oblečení - krvavé..." oninput="prepareAutomaticCases()"></textarea>
+
+          <div id="automaticCaseWrap" hidden>
+            <label for="automaticCaseSelect">Nalezené případy</label>
+            <select id="automaticCaseSelect"></select>
+          </div>
+
+          <p class="note">Poznámky se zpracují pouze v tomto prohlížeči a nikam se neodesílají.</p>
+        </div>
+
         <div class="buttons">
-          <button onclick="generateReport()">Vygenerovat zprávu</button>
+          <button id="generateReportButton" onclick="generateReport()">Vygenerovat zprávu</button>
           <button id="saveReportButton" onclick="saveReport()">Uložit zprávu</button>
           <button class="secondary" onclick="copyReport()">Kopírovat zprávu</button>
           <button class="danger" onclick="clearForm()">Vymazat</button>
@@ -557,20 +596,187 @@
 
       activeDocumentType = type;
       const medical = type === "medical";
+      const autopsy = type === "autopsy";
+      const automatic = type === "automatic";
       document.getElementById("medicalFields").hidden = !medical;
-      document.getElementById("autopsyFields").hidden = medical;
+      document.getElementById("autopsyFields").hidden = !autopsy;
+      document.getElementById("automaticFields").hidden = !automatic;
       document.getElementById("medicalSwitch").classList.toggle("is-active", medical);
-      document.getElementById("autopsySwitch").classList.toggle("is-active", !medical);
+      document.getElementById("autopsySwitch").classList.toggle("is-active", autopsy);
+      document.getElementById("automaticSwitch").classList.toggle("is-active", automatic);
       document.getElementById("medicalSwitch").setAttribute("aria-pressed", medical);
-      document.getElementById("autopsySwitch").setAttribute("aria-pressed", !medical);
-      document.getElementById("outputTitle").textContent = medical ? "Hotová lékařská zpráva" : "Hotová pitevní zpráva";
+      document.getElementById("autopsySwitch").setAttribute("aria-pressed", autopsy);
+      document.getElementById("automaticSwitch").setAttribute("aria-pressed", automatic);
+      document.getElementById("generateReportButton").textContent = automatic ? "Roztřídit a otevřít pitevní zprávu" : "Vygenerovat zprávu";
+      document.getElementById("outputTitle").textContent = medical ? "Hotová lékařská zpráva" : automatic ? "Výsledek automatického třídění" : "Hotová pitevní zpráva";
       document.getElementById("output").textContent = EMPTY_REPORT;
       currentReport = "";
       currentReportData = null;
       document.getElementById("saveReportButton").disabled = true;
     }
 
+    function normalizeText(text) {
+      return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+    }
+
+    function cleanAutomaticValue(rawValue) {
+      const cleaned = rawValue.trim();
+      const normalized = normalizeText(cleaned).replace(/[?.!]+$/g, "");
+      const unknownValues = ["nevim", "nevim co tim myslis", "nvm", "to nvm", "idk", "neznam", "nezname"];
+      return unknownValues.includes(normalized) ? "Nezjištěno" : cleaned;
+    }
+
+    function splitAutomaticCases(notes) {
+      return notes
+        .split(/^\s*-{5,}\s*$/m)
+        .map(part => part.trim())
+        .filter(Boolean);
+    }
+
+    function prepareAutomaticCases() {
+      const notes = value("automaticNotes");
+      const cases = splitAutomaticCases(notes);
+      const wrap = document.getElementById("automaticCaseWrap");
+      const select = document.getElementById("automaticCaseSelect");
+      const previous = select.value;
+      select.replaceChildren();
+
+      cases.forEach((caseText, index) => {
+        const firstLine = caseText.split(/\r?\n/).find(line => line.trim()) || `Případ ${index + 1}`;
+        const option = document.createElement("option");
+        option.value = String(index);
+        option.textContent = `Případ ${index + 1}: ${firstLine.trim().slice(0, 65)}`;
+        select.appendChild(option);
+      });
+
+      wrap.hidden = cases.length < 2;
+      if (previous && Number(previous) < cases.length) select.value = previous;
+      return cases;
+    }
+
+    function addParsedValue(result, field, text, prefix = "") {
+      if (!text) return;
+      const valueToAdd = prefix ? `${prefix}: ${text}` : text;
+      result[field] = result[field] ? `${result[field]}\n${valueToAdd}` : valueToAdd;
+    }
+
+    function parseAutopsyNotes(notes) {
+      const result = {};
+      const bodyDetails = [];
+      const unclassified = [];
+      const lines = notes.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+
+      lines.forEach(line => {
+        const pair = line.match(/^(.{2,80}?)\s*(?:-|–|—|:)\s*(.+)$/);
+        if (pair) {
+          const label = normalizeText(pair[1]);
+          const parsedValue = cleanAutomaticValue(pair[2]);
+
+          if (/^(jmeno|jmeno zesnuleho|zesnuly)$/.test(label)) result.deceasedName = parsedValue;
+          else if (label.includes("pohlavi")) bodyDetails.push(`Pohlaví: ${parsedValue}`);
+          else if (/\bvek\b/.test(label)) bodyDetails.push(`Přibližný věk: ${parsedValue}`);
+          else if (label.includes("vyska")) bodyDetails.push(`Tělesná výška: ${parsedValue}`);
+          else if (label.includes("znameni") && !label.includes("cizi")) bodyDetails.push(`Zvláštní znamení: ${parsedValue}`);
+          else if (label.includes("stav obleceni")) addParsedValue(result, "clothingBelongings", parsedValue, "Stav oblečení");
+          else if (label.includes("u tela nalezeno") || label.includes("osobni veci")) addParsedValue(result, "clothingBelongings", parsedValue, "Věci nalezené u těla");
+          else if (label.includes("povrchove") || label.includes("smer") || label.includes("druh zraneni") || label.includes("zbran") || label.includes("za ziva") || label.includes("zaziva") || label.includes("poskozene")) addParsedValue(result, "injuryDescription", parsedValue, pair[1].trim());
+          else if (label.includes("ciziho zavineni")) {
+            addParsedValue(result, "injuryDescription", parsedValue, "Známky cizího zavinění");
+            if (!/^(ne|nejsou|nezjisteno)$/i.test(normalizeText(parsedValue))) result.deathManner = "Podezření na cizí zavinění";
+          }
+          else if (label.includes("hrudniku") || label.includes("plic") || label.includes("organu") || label.includes("posledni jidlo")) addParsedValue(result, "internalFindings", parsedValue, pair[1].trim());
+          else if (label.includes("otravy")) addParsedValue(result, "toxicologySamples", parsedValue, "Známky otravy");
+          else if (label.includes("teplota tela") || label.includes("zbarveni kuze") || label.includes("oci") || label.includes("ust") || label.includes("souboji") || label.includes("svazani") || label.includes("zvirat")) addParsedValue(result, "externalExam", parsedValue, pair[1].trim());
+          else if (label.includes("vlivy prostredi")) addParsedValue(result, "sceneSummary", parsedValue, "Vlivy prostředí");
+          else if (label.includes("pred jakou dobou") || label.includes("doba smrti")) result.estimatedDeathTime = parsedValue;
+          else if (label.includes("pricina smrti")) result.immediateCause = parsedValue;
+          else if (label.includes("misto nalezu")) result.bodyFoundLocation = parsedValue;
+          else if (label.includes("datum") && label.includes("nalezu")) result.foundAt = parsedValue;
+          else unclassified.push(line);
+          return;
+        }
+
+        const normalized = normalizeText(line);
+        let classified = false;
+        if (/\b(muz|zena|let|cm|znameni)\b/.test(normalized) && line.length < 100) {
+          bodyDetails.push(line);
+          classified = true;
+        }
+        if (/(obleceni|ohoř|ohorel|krvav|priskvar)/.test(normalized)) {
+          addParsedValue(result, "clothingBelongings", line);
+          classified = true;
+        }
+        if (/(zbran|naboj|nabojnic|revolver|pistol|brokovnic|carcana|cattleman|odznak|hodiny)/.test(normalized)) {
+          addParsedValue(result, "securedEvidence", line);
+          classified = true;
+        }
+        if (/(strel|rana|zran|hlav|krk|broka|strelny prach)/.test(normalized)) {
+          addParsedValue(result, "injuryDescription", line);
+          classified = true;
+        }
+        if (/(organ|mozek|srdce|jatra|zalud|jidlo|vajick)/.test(normalized)) {
+          addParsedValue(result, "internalFindings", line);
+          classified = true;
+        }
+        if (/(otrava|alkohol|petrolej)/.test(normalized)) {
+          addParsedValue(result, "toxicologySamples", line);
+          classified = true;
+        }
+        if (/(ztuhl|stuh|rozklad|zornic|svazan|lana|zvire|vlk|kuze)/.test(normalized)) {
+          addParsedValue(result, "externalExam", line);
+          classified = true;
+        }
+        if (/(zima|ohen|oheň|prostredi)/.test(normalized)) {
+          addParsedValue(result, "sceneSummary", line);
+          classified = true;
+        }
+        if (/(smrt cca|zabit cca|hodin pred nalezem|pred nalezem)/.test(normalized)) {
+          addParsedValue(result, "estimatedDeathTime", line);
+          classified = true;
+        }
+        if (!classified) unclassified.push(line);
+      });
+
+      if (bodyDetails.length) result.bodyDescription = bodyDetails.join("\n");
+      if (!result.deceasedName || result.deceasedName === "Nezjištěno") {
+        const body = normalizeText(result.bodyDescription || "");
+        result.deceasedName = body.includes("muz") ? "Neznámý muž" : body.includes("zena") ? "Neznámá žena" : "Neznámá osoba";
+      }
+      result.autopsyTitle = `Pitevní protokol — ${result.deceasedName}`;
+      result.unclassifiedNotes = unclassified.join("\n");
+      return result;
+    }
+
+    function createAutopsyFromNotes() {
+      const cases = prepareAutomaticCases();
+      if (!cases.length) {
+        alert("Nejdřív vlož poznámky z pitvy.");
+        return;
+      }
+
+      const selectedIndex = Number(document.getElementById("automaticCaseSelect").value || 0);
+      const result = parseAutopsyNotes(cases[selectedIndex]);
+      const autopsyFields = document.getElementById("autopsyFields");
+      autopsyFields.querySelectorAll("input, textarea").forEach(field => field.value = "");
+      document.getElementById("protocolStatus").value = "Rozpracovaný";
+      document.getElementById("deathManner").value = "Neurčená";
+
+      Object.entries(result).forEach(([fieldId, fieldValue]) => {
+        const field = document.getElementById(fieldId);
+        if (field && fieldValue) field.value = fieldValue;
+      });
+
+      switchDocument("autopsy");
+      alert(cases.length > 1
+        ? `Roztříděn případ ${selectedIndex + 1} z ${cases.length}. Pitevní zprávu před vygenerováním zkontroluj.`
+        : "Poznámky byly roztříděné. Pitevní zprávu před vygenerováním zkontroluj.");
+    }
+
     function generateReport() {
+      if (activeDocumentType === "automatic") {
+        createAutopsyFromNotes();
+        return;
+      }
       if (activeDocumentType === "autopsy") {
         generateAutopsyReport();
         return;
@@ -646,6 +852,7 @@ ${signature}`;
       const protocolNumber = value("protocolNumber") || "---";
       const caseNumber = value("caseNumber") || "---";
       const deceasedName = value("deceasedName");
+      const bodyDescription = value("bodyDescription") || "---";
       const identifiedBy = value("identifiedBy") || "---";
       const autopsyDoctor = value("autopsyDoctor") || "---";
       const autopsyAssistants = value("autopsyAssistants") || "---";
@@ -666,6 +873,7 @@ ${signature}`;
       const pathologistConclusion = value("pathologistConclusion") || "---";
       const furtherInvestigation = value("furtherInvestigation") || "---";
       const photoReferences = value("photoReferences") || "Žádné uvedené fotografie";
+      const unclassifiedNotes = value("unclassifiedNotes") || "---";
       const autopsySignature = value("autopsySignature") || autopsyDoctor;
 
       const report = `${title.toUpperCase()}
@@ -681,6 +889,9 @@ ${protocolNumber}
 
 ZESNULÝ:
 ${deceasedName || "---"}
+
+POPIS A IDENTIFIKAČNÍ ZNAKY TĚLA:
+${bodyDescription}
 
 IDENTIFIKACI PROVEDL:
 ${identifiedBy}
@@ -741,6 +952,9 @@ ${furtherInvestigation}
 
 PŘIPOJENÉ FOTOGRAFIE / OZNAČENÍ:
 ${photoReferences}
+
+NEUŘAZENÉ PŮVODNÍ POZNÁMKY:
+${unclassifiedNotes}
 
 PODPIS / INICIÁLY PATOLOGA:
 ${autopsySignature}`;
@@ -874,7 +1088,7 @@ ${autopsySignature}`;
       localStorage.removeItem(REPORTS_STORAGE_KEY);
       renderLedger();
       document.getElementById("output").textContent = EMPTY_REPORT;
-      document.getElementById("outputTitle").textContent = activeDocumentType === "medical" ? "Hotová lékařská zpráva" : "Hotová pitevní zpráva";
+      document.getElementById("outputTitle").textContent = activeDocumentType === "medical" ? "Hotová lékařská zpráva" : activeDocumentType === "automatic" ? "Výsledek automatického třídění" : "Hotová pitevní zpráva";
       currentReport = "";
       currentReportData = null;
       document.getElementById("saveReportButton").disabled = true;
@@ -908,7 +1122,7 @@ ${autopsySignature}`;
         document.getElementById("deathManner").value = "Neurčená";
       }
       document.getElementById("output").textContent = EMPTY_REPORT;
-      document.getElementById("outputTitle").textContent = activeDocumentType === "medical" ? "Hotová lékařská zpráva" : "Hotová pitevní zpráva";
+      document.getElementById("outputTitle").textContent = activeDocumentType === "medical" ? "Hotová lékařská zpráva" : activeDocumentType === "automatic" ? "Výsledek automatického třídění" : "Hotová pitevní zpráva";
       currentReport = "";
       currentReportData = null;
       document.getElementById("saveReportButton").disabled = true;
