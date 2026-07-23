@@ -216,6 +216,48 @@
       font-size: 26px;
     }
 
+    .cart-box {
+      margin-top: 18px;
+      padding: 14px;
+      border: 2px solid #8a6540;
+      border-radius: 7px;
+      background: #f7e5c2;
+    }
+
+    .cart-box h3 {
+      margin: 0 0 10px;
+      color: #4b311f;
+    }
+
+    .cart-items {
+      display: grid;
+      gap: 7px;
+    }
+
+    .cart-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+      padding: 9px;
+      border: 1px solid #b08a5d;
+      border-radius: 5px;
+      background: var(--paper-light);
+    }
+
+    .cart-item p { margin: 0; line-height: 1.35; }
+    .cart-item button { min-height: 32px; padding: 6px 9px; }
+
+    .cart-total {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 11px;
+      padding-top: 10px;
+      border-top: 1px solid #b08a5d;
+      font-size: 18px;
+    }
+
     .records {
       display: grid;
       gap: 9px;
@@ -355,7 +397,14 @@
           <strong id="pricePreview">5 $</strong>
         </div>
 
-        <button id="addButton" class="submit" type="button" onclick="addRecord()">Přidat do evidence</button>
+        <button id="addButton" class="submit" type="button" onclick="addToCart()">Přidat položku do nákupu</button>
+
+        <section class="cart-box" aria-labelledby="cartTitle">
+          <h3 id="cartTitle">Aktuální nákup</h3>
+          <div id="cartItems" class="cart-items"></div>
+          <div class="cart-total"><span>Celkem za nákup</span><strong id="cartTotal">0 $</strong></div>
+          <button id="savePurchaseButton" class="submit" type="button" onclick="savePurchase()" disabled>Uložit celý nákup do evidence</button>
+        </section>
         <p class="privacy-note">Jméno se ukládá pouze u obvazů. Všechny údaje zůstávají jen v lokální paměti tohoto prohlížeče.</p>
       </section>
 
@@ -397,9 +446,11 @@
 
   <script>
     const STORAGE_KEY = "westhaven-standalone-sales-ledger-v1";
+    const CART_STORAGE_KEY = "westhaven-standalone-sales-cart-v1";
     const SHIFT_STORAGE_KEY = "westhaven-standalone-active-shift-v1";
     const BANDAGE_DAILY_LIMIT = 5;
     let records = loadRecords();
+    let cart = loadCart();
     let activeShiftStart = loadActiveShift();
     let shiftTimer = null;
 
@@ -414,6 +465,19 @@
 
     function saveRecords() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+    }
+
+    function loadCart() {
+      try {
+        const stored = JSON.parse(localStorage.getItem(CART_STORAGE_KEY));
+        return Array.isArray(stored) ? stored : [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function saveCart() {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
     }
 
     function loadActiveShift() {
@@ -580,6 +644,14 @@
         .reduce((sum, record) => sum + record.quantity, 0);
     }
 
+    function bandagesInCart(name) {
+      const normalized = normalizeName(name);
+      if (!normalized) return 0;
+      return cart
+        .filter(item => item.itemId === "bandage" && item.normalizedCustomer === normalized)
+        .reduce((sum, item) => sum + item.quantity, 0);
+    }
+
     function updateLimitStatus() {
       const status = document.getElementById("limitStatus");
       const name = document.getElementById("customerName").value.trim();
@@ -587,12 +659,14 @@
         status.textContent = "Zadej jméno pro kontrolu denního limitu.";
         return;
       }
-      const used = bandagesUsedToday(name);
+      const saved = bandagesUsedToday(name);
+      const waiting = bandagesInCart(name);
+      const used = saved + waiting;
       const remaining = Math.max(0, BANDAGE_DAILY_LIMIT - used);
       status.replaceChildren();
       const customer = document.createElement("strong");
       customer.textContent = name;
-      status.append(customer, ` dnes odebral ${used} z ${BANDAGE_DAILY_LIMIT} obvazů. Zbývá ${remaining}.`);
+      status.append(customer, ` má dnes ${used} z ${BANDAGE_DAILY_LIMIT} obvazů${waiting ? ` (z toho ${waiting} v aktuálním nákupu)` : ""}. Zbývá ${remaining}.`);
     }
 
     function updateForm() {
@@ -605,7 +679,7 @@
       if (isBandage) updateLimitStatus();
     }
 
-    function addRecord() {
+    function addToCart() {
       const option = selectedItem();
       const itemQuantity = quantity();
       const price = unitPrice();
@@ -627,7 +701,7 @@
           alert("U obvazů musíš zadat jméno kupujícího.");
           return;
         }
-        const used = bandagesUsedToday(customerName);
+        const used = bandagesUsedToday(customerName) + bandagesInCart(customerName);
         if (used + itemQuantity > BANDAGE_DAILY_LIMIT) {
           alert(`${customerName} už dnes odebral ${used} obvazů. Přidat lze nejvýše ${BANDAGE_DAILY_LIMIT - used}.`);
           return;
@@ -636,7 +710,7 @@
         sheriff = document.getElementById("isSheriff").checked;
       }
 
-      records.push({
+      cart.push({
         id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
         itemId: option.value,
         itemName: option.dataset.name,
@@ -646,19 +720,81 @@
         customerName,
         normalizedCustomer,
         sheriff,
-        dateKey: localDateKey(),
-        createdAt: new Date().toISOString()
+        dateKey: localDateKey()
       });
-      saveRecords();
-      renderRecords();
+      saveCart();
+      renderCart();
 
       document.getElementById("quantity").value = "1";
       document.getElementById("customPrice").value = "";
-      if (option.value === "bandage") {
-        document.getElementById("customerName").value = "";
-        document.getElementById("isSheriff").checked = false;
-      }
       updateForm();
+    }
+
+    function removeFromCart(id) {
+      cart = cart.filter(item => item.id !== id);
+      saveCart();
+      renderCart();
+      updateForm();
+    }
+
+    function renderCart() {
+      const list = document.getElementById("cartItems");
+      list.replaceChildren();
+      if (!cart.length) {
+        const empty = document.createElement("p");
+        empty.className = "empty";
+        empty.textContent = "Nákup je zatím prázdný.";
+        list.appendChild(empty);
+      } else {
+        cart.forEach(item => {
+          const row = document.createElement("div");
+          row.className = "cart-item";
+          const description = document.createElement("p");
+          description.textContent = item.itemId === "bandage"
+            ? `${item.customerName} — ${item.quantity}× ${item.itemName}${item.sheriff ? " (šerif)" : ""} — ${money(item.total)}`
+            : `${item.quantity}× ${item.itemName} — ${money(item.total)}`;
+          const remove = document.createElement("button");
+          remove.type = "button";
+          remove.className = "danger";
+          remove.textContent = "Odebrat";
+          remove.addEventListener("click", () => removeFromCart(item.id));
+          row.append(description, remove);
+          list.appendChild(row);
+        });
+      }
+      const total = cart.reduce((sum, item) => sum + Number(item.total || 0), 0);
+      document.getElementById("cartTotal").textContent = money(total);
+      document.getElementById("savePurchaseButton").disabled = !cart.length;
+    }
+
+    function savePurchase() {
+      if (!cart.length) {
+        alert("Nejdřív přidej alespoň jednu položku do nákupu.");
+        return;
+      }
+      const transactionId = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+      const createdAt = new Date().toISOString();
+      const dateKey = localDateKey();
+      cart.forEach((item, index) => {
+        records.push({
+          ...item,
+          id: `${transactionId}-${index}`,
+          transactionId,
+          dateKey,
+          createdAt
+        });
+      });
+      const itemCount = cart.length;
+      const total = cart.reduce((sum, item) => sum + Number(item.total || 0), 0);
+      cart = [];
+      localStorage.removeItem(CART_STORAGE_KEY);
+      saveRecords();
+      renderCart();
+      renderRecords();
+      document.getElementById("customerName").value = "";
+      document.getElementById("isSheriff").checked = false;
+      updateForm();
+      alert(`Nákup byl uložen: ${itemCount} položek, celkem ${money(total)}.`);
     }
 
     function deleteRecord(id) {
@@ -711,6 +847,10 @@
     }
 
     function closeLedger() {
+      if (cart.length) {
+        alert("V aktuálním nákupu jsou neuložené položky. Nejdřív nákup ulož nebo položky z košíku odeber.");
+        return;
+      }
       if (!records.length) {
         alert("Evidence je už prázdná.");
         return;
@@ -726,6 +866,7 @@
     }
 
     renderRecords();
+    renderCart();
     updateForm();
     if (activeShiftStart) {
       renderShiftClock();
