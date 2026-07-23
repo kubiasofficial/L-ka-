@@ -47,6 +47,67 @@
       align-items: start;
     }
 
+    .shift-panel {
+      margin-bottom: 24px;
+      border-color: #9b2424;
+    }
+
+    .shift-controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .shift-controls button { min-width: 145px; }
+
+    .shift-clock {
+      flex: 1;
+      min-width: 210px;
+      padding: 10px 12px;
+      border: 1px solid #b08a5d;
+      border-radius: 6px;
+      background: var(--paper-light);
+    }
+
+    .shift-clock span,
+    .shift-clock strong { display: block; }
+    .shift-clock strong { margin-top: 3px; color: var(--red); font-size: 21px; }
+
+    .shift-report {
+      margin-top: 15px;
+      padding: 14px;
+      border: 2px solid var(--red);
+      border-radius: 7px;
+      background: var(--paper-light);
+    }
+
+    .shift-report pre {
+      margin: 0 0 12px;
+      white-space: pre-wrap;
+      color: var(--ink);
+      font: 16px/1.55 "Courier New", monospace;
+    }
+
+    dialog {
+      width: min(480px, calc(100% - 30px));
+      padding: 22px;
+      border: 3px solid #7a5632;
+      border-radius: 10px;
+      background: var(--paper);
+      color: var(--ink);
+      box-shadow: 0 20px 70px rgba(0, 0, 0, 0.65);
+    }
+
+    dialog::backdrop { background: rgba(13, 8, 4, 0.78); }
+
+    .dialog-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 9px;
+      margin-top: 18px;
+    }
+
     .panel {
       padding: 22px;
       border: 3px solid #7a5632;
@@ -233,6 +294,22 @@
       <p>Samostatná lokální pokladní kniha státního lékaře</p>
     </header>
 
+    <section class="panel shift-panel" aria-labelledby="shiftTitle">
+      <h2 id="shiftTitle">Počítadlo směny</h2>
+      <div class="shift-controls">
+        <button id="startShiftButton" type="button" onclick="startShift()">Začít směnu</button>
+        <button id="endShiftButton" class="danger" type="button" onclick="openEndShiftDialog()" disabled>Ukončit směnu</button>
+        <div class="shift-clock" aria-live="polite">
+          <span id="shiftStatus">Směna není spuštěná</span>
+          <strong id="shiftElapsed">00:00:00</strong>
+        </div>
+      </div>
+      <div id="shiftReportBox" class="shift-report" hidden>
+        <pre id="shiftReportText"></pre>
+        <button type="button" onclick="copyShiftReport()">Kopírovat zprávu o směně</button>
+      </div>
+    </section>
+
     <main class="layout">
       <section class="panel">
         <h2>Nový záznam</h2>
@@ -298,10 +375,33 @@
     </main>
   </div>
 
+  <dialog id="endShiftDialog" aria-labelledby="endShiftTitle">
+    <h2 id="endShiftTitle">Ukončení směny</h2>
+    <p>Vyber místo, kde jsi během směny sloužil.</p>
+    <label for="shiftLocation">Kde jsi sloužil?</label>
+    <select id="shiftLocation" onchange="toggleCustomLocation()">
+      <option value="Blackwater Ordinace">Blackwater</option>
+      <option value="Valentine Ordinace">Valentine</option>
+      <option value="Rhodes Ordinace">Rhodes</option>
+      <option value="other">Jiné</option>
+    </select>
+    <div id="customLocationField" hidden>
+      <label for="customLocation">Vlastní lokace</label>
+      <input id="customLocation" placeholder="Doplň místo služby">
+    </div>
+    <div class="dialog-actions">
+      <button type="button" onclick="closeEndShiftDialog()">Zrušit</button>
+      <button class="danger" type="button" onclick="finishShift()">Ukončit a vytvořit zprávu</button>
+    </div>
+  </dialog>
+
   <script>
     const STORAGE_KEY = "westhaven-standalone-sales-ledger-v1";
+    const SHIFT_STORAGE_KEY = "westhaven-standalone-active-shift-v1";
     const BANDAGE_DAILY_LIMIT = 5;
     let records = loadRecords();
+    let activeShiftStart = loadActiveShift();
+    let shiftTimer = null;
 
     function loadRecords() {
       try {
@@ -314,6 +414,129 @@
 
     function saveRecords() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+    }
+
+    function loadActiveShift() {
+      const stored = localStorage.getItem(SHIFT_STORAGE_KEY);
+      if (!stored) return null;
+      const parsed = new Date(stored);
+      if (Number.isNaN(parsed.getTime())) {
+        localStorage.removeItem(SHIFT_STORAGE_KEY);
+        return null;
+      }
+      return parsed;
+    }
+
+    function timeText(date) {
+      return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+    }
+
+    function shiftDateText(date) {
+      return `${date.getDate()}.${date.getMonth() + 1}.1899`;
+    }
+
+    function elapsedClock(milliseconds) {
+      const totalSeconds = Math.max(0, Math.floor(milliseconds / 1000));
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      return [hours, minutes, seconds].map(value => String(value).padStart(2, "0")).join(":");
+    }
+
+    function durationText(milliseconds) {
+      const totalMinutes = Math.max(1, Math.round(milliseconds / 60000));
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = totalMinutes % 60;
+      if (hours && minutes) return `${hours}h ${minutes} min`;
+      if (hours) return `${hours}h`;
+      return `${minutes} min`;
+    }
+
+    function renderShiftClock() {
+      const running = activeShiftStart instanceof Date;
+      document.getElementById("startShiftButton").disabled = running;
+      document.getElementById("endShiftButton").disabled = !running;
+      if (!running) return;
+      document.getElementById("shiftStatus").textContent = `Směna běží od ${timeText(activeShiftStart)}`;
+      document.getElementById("shiftElapsed").textContent = elapsedClock(Date.now() - activeShiftStart.getTime());
+    }
+
+    function startShift() {
+      if (activeShiftStart) return;
+      activeShiftStart = new Date();
+      localStorage.setItem(SHIFT_STORAGE_KEY, activeShiftStart.toISOString());
+      document.getElementById("shiftReportBox").hidden = true;
+      renderShiftClock();
+      shiftTimer = window.setInterval(renderShiftClock, 1000);
+    }
+
+    function openEndShiftDialog() {
+      if (!activeShiftStart) {
+        alert("Nejdřív spusť směnu.");
+        return;
+      }
+      document.getElementById("endShiftDialog").showModal();
+    }
+
+    function closeEndShiftDialog() {
+      document.getElementById("endShiftDialog").close();
+    }
+
+    function toggleCustomLocation() {
+      const custom = document.getElementById("shiftLocation").value === "other";
+      document.getElementById("customLocationField").hidden = !custom;
+      if (custom) document.getElementById("customLocation").focus();
+    }
+
+    function finishShift() {
+      if (!activeShiftStart) return;
+      const locationSelect = document.getElementById("shiftLocation");
+      const customLocation = document.getElementById("customLocation").value.trim();
+      const location = locationSelect.value === "other" ? customLocation : locationSelect.value;
+      if (!location) {
+        alert("Doplň vlastní lokaci služby.");
+        document.getElementById("customLocation").focus();
+        return;
+      }
+
+      const shiftEnd = new Date();
+      const report = `Datum: ${shiftDateText(activeShiftStart)}\nSlužba: ${timeText(activeShiftStart)}-${timeText(shiftEnd)} (${durationText(shiftEnd - activeShiftStart)})\nLokácia: ${location}`;
+      document.getElementById("shiftReportText").textContent = report;
+      document.getElementById("shiftReportBox").hidden = false;
+      document.getElementById("endShiftDialog").close();
+
+      activeShiftStart = null;
+      localStorage.removeItem(SHIFT_STORAGE_KEY);
+      if (shiftTimer) window.clearInterval(shiftTimer);
+      shiftTimer = null;
+      document.getElementById("startShiftButton").disabled = false;
+      document.getElementById("endShiftButton").disabled = true;
+      document.getElementById("shiftStatus").textContent = "Směna byla ukončena";
+      document.getElementById("shiftElapsed").textContent = "00:00:00";
+    }
+
+    function copyShiftReport() {
+      const report = document.getElementById("shiftReportText").textContent;
+      if (!report) return;
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(report).then(() => {
+          alert("Zpráva o směně byla zkopírována.");
+        }).catch(() => fallbackCopyShiftReport(report));
+        return;
+      }
+      fallbackCopyShiftReport(report);
+    }
+
+    function fallbackCopyShiftReport(report) {
+      const textArea = document.createElement("textarea");
+      textArea.value = report;
+      textArea.style.position = "fixed";
+      textArea.style.opacity = "0";
+      document.body.appendChild(textArea);
+      textArea.select();
+      const copied = document.execCommand("copy");
+      textArea.remove();
+      alert(copied ? "Zpráva o směně byla zkopírována." : "Kopírování se nepovedlo. Označ text ručně a použij CTRL + C.");
     }
 
     function localDateKey(date = new Date()) {
@@ -504,6 +727,10 @@
 
     renderRecords();
     updateForm();
+    if (activeShiftStart) {
+      renderShiftClock();
+      shiftTimer = window.setInterval(renderShiftClock, 1000);
+    }
   </script>
 </body>
 </html>
